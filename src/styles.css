@@ -25,6 +25,11 @@ body {
   font-family: 'Cormorant Garamond', Georgia, serif;
 }
 
+body.sunflower-cursor-enabled,
+body.sunflower-cursor-enabled * {
+  cursor: none !important;
+}
+
 .app-shell {
   width: 100%;
   height: 100%;
@@ -43,10 +48,6 @@ body {
   display: none;
 }
 
-.hold-active {
-  cursor: progress;
-}
-
 .intro-gate,
 .cinematic-slide {
   position: relative;
@@ -57,12 +58,13 @@ body {
 }
 
 .intro-gate {
-  background: radial-gradient(circle at 50% 30%, rgba(226, 169, 79, 0.35), rgba(18, 10, 8, 0.96) 78%);
   display: grid;
   place-items: center;
+  background: #08060a;
 }
 
-.intro-gradient,
+.intro-night-layer,
+.intro-day-layer,
 .intro-vignette,
 .intro-blackout,
 .slide-vignette,
@@ -73,12 +75,20 @@ body {
   pointer-events: none;
 }
 
-.intro-gradient {
-  background: radial-gradient(circle at 48% 42%, rgba(252, 214, 135, 0.38), rgba(17, 10, 8, 0.92) 76%);
+.intro-night-layer {
+  background:
+    radial-gradient(circle at 80% 15%, rgba(142, 165, 214, 0.18), rgba(13, 11, 19, 0.94) 52%),
+    linear-gradient(150deg, rgba(15, 22, 44, 0.7), rgba(7, 5, 8, 0.96));
+}
+
+.intro-day-layer {
+  background:
+    radial-gradient(circle at 18% 24%, rgba(255, 226, 151, 0.86), rgba(244, 182, 83, 0.2) 44%, transparent 58%),
+    linear-gradient(150deg, rgba(232, 176, 86, 0.54), rgba(120, 72, 33, 0.82));
 }
 
 .intro-vignette {
-  background: radial-gradient(circle at center, transparent 38%, rgba(7, 5, 4, 0.76) 100%);
+  background: radial-gradient(circle at center, transparent 42%, rgba(5, 3, 2, 0.7) 100%);
 }
 
 .pollen-particle {
@@ -91,14 +101,124 @@ body {
   filter: blur(0.2px);
 }
 
-.sunflower-trigger {
+.intro-sky-track {
+  position: absolute;
+  top: 10vh;
+  right: min(16vw, 120px);
+  width: min(72vw, 860px);
+  height: clamp(104px, 16vh, 180px);
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.moon-sun-orb {
   position: relative;
-  width: clamp(190px, 24vw, 300px);
+  width: clamp(84px, 11vw, 126px);
   aspect-ratio: 1;
-  cursor: pointer;
+  border-radius: 50%;
+  touch-action: none;
+  user-select: none;
+}
+
+.orb-halo {
+  position: absolute;
+  inset: -24%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 219, 146, 0.6), rgba(255, 219, 146, 0.01) 70%);
+}
+
+.orb-body {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+}
+
+.orb-moon {
+  background:
+    radial-gradient(circle at 33% 30%, rgba(242, 245, 255, 0.95), rgba(196, 206, 232, 0.87) 62%, rgba(148, 160, 198, 0.84));
+  box-shadow: 0 12px 48px rgba(112, 137, 184, 0.35);
+}
+
+.orb-sun {
+  background:
+    radial-gradient(circle at 34% 32%, rgba(255, 248, 212, 0.99), rgba(253, 215, 124, 0.95) 52%, rgba(241, 166, 66, 0.9));
+  box-shadow: 0 16px 58px rgba(255, 189, 84, 0.55);
+}
+
+.moon-crater {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(126, 140, 176, 0.38);
+}
+
+.crater-a {
+  width: 17%;
+  height: 17%;
+  left: 30%;
+  top: 26%;
+}
+
+.crater-b {
+  width: 10%;
+  height: 10%;
+  left: 58%;
+  top: 39%;
+}
+
+.crater-c {
+  width: 13%;
+  height: 13%;
+  left: 41%;
+  top: 56%;
+}
+
+.sun-rays {
+  position: absolute;
+  inset: -36%;
+}
+
+.sun-rays span {
+  position: absolute;
+  left: calc(50% - 2px);
+  top: 0;
+  width: 4px;
+  height: 18px;
+  transform-origin: 50% 70px;
+  transform: rotate(var(--ray-angle));
+  border-radius: 999px;
+  background: linear-gradient(to bottom, rgba(255, 236, 171, 0.94), rgba(245, 166, 72, 0));
+}
+
+.intro-ground-sunflower {
+  position: absolute;
+  left: 52%;
+  bottom: 0;
+  width: clamp(180px, 28vw, 260px);
+  height: clamp(280px, 43vh, 400px);
+  transform-origin: bottom center;
+}
+
+.ground-stem {
+  position: absolute;
+  bottom: 0;
+  left: 40%;
+  width: clamp(10px, 1vw, 13px);
+  height: 72%;
+  border-radius: 999px;
+  background: linear-gradient(to top, rgba(44, 108, 39, 0.85), rgba(94, 172, 75, 0.96));
+  box-shadow: inset -2px 0 7px rgba(29, 72, 27, 0.5);
+}
+
+.ground-head {
+  position: absolute;
+  left: 30%;
+  bottom: 64%;
+  width: clamp(94px, 13vw, 136px);
+  aspect-ratio: 1;
   border-radius: 50%;
   background:
-    radial-gradient(circle at 50% 50%, rgba(74, 42, 16, 0.96) 0 20%, transparent 20.5%),
+    radial-gradient(circle at 50% 50%, rgba(74, 42, 16, 0.96) 0 22%, transparent 22.5%),
     repeating-conic-gradient(
       from -9deg,
       #f9cd66 0deg 11deg,
@@ -107,40 +227,29 @@ body {
       #f1ad35 29deg 36deg
     );
   box-shadow:
-    0 0 0 8px rgba(248, 196, 92, 0.12),
-    0 34px 78px rgba(8, 5, 3, 0.55);
+    0 0 0 7px rgba(248, 196, 92, 0.14),
+    0 24px 34px rgba(8, 5, 3, 0.34);
 }
 
-.sunflower-core,
-.sunflower-progress {
+.ground-core {
   position: absolute;
   inset: 26%;
   border-radius: 50%;
-}
-
-.sunflower-core {
   background:
     radial-gradient(circle at 40% 38%, rgba(129, 76, 31, 0.95), rgba(59, 34, 13, 1) 72%),
     repeating-radial-gradient(circle at center, rgba(48, 29, 11, 0.95) 0 1px, transparent 1px 4px);
 }
 
-.sunflower-progress {
-  inset: -7px;
-  border: 3px solid rgba(255, 240, 205, 0.2);
-  mask-image: conic-gradient(from -90deg, black calc(var(--progress) * 360deg), transparent 0deg);
-  background: linear-gradient(120deg, rgba(255, 232, 174, 0.8), rgba(248, 178, 72, 0.8));
-}
-
 .intro-caption {
   position: absolute;
-  bottom: max(8vh, 44px);
+  bottom: max(7vh, 40px);
   width: min(90vw, 620px);
   text-align: center;
   font-family: 'Manrope', sans-serif;
   letter-spacing: 0.05em;
   text-transform: lowercase;
-  font-size: clamp(0.72rem, 1.8vw, 0.92rem);
-  color: rgba(246, 225, 188, 0.84);
+  font-size: clamp(0.72rem, 1.8vw, 0.94rem);
+  color: rgba(246, 225, 188, 0.9);
 }
 
 .intro-blackout {
@@ -213,15 +322,72 @@ body {
   perspective: 1200px;
 }
 
+.paper-stage {
+  position: relative;
+  width: 100%;
+  min-height: clamp(240px, 38vh, 350px);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.paper-crumple {
+  position: absolute;
+  width: clamp(120px, 21vw, 170px);
+  aspect-ratio: 1;
+  border-radius: 56% 44% 48% 52% / 62% 38% 57% 43%;
+  background:
+    radial-gradient(circle at 35% 30%, rgba(255, 250, 237, 0.94), rgba(226, 205, 165, 0.92) 56%, rgba(182, 150, 101, 0.92)),
+    repeating-linear-gradient(
+      38deg,
+      rgba(103, 72, 36, calc(var(--paper-crinkle) * 0.22)) 0px,
+      transparent 3px,
+      transparent 12px
+    );
+  box-shadow:
+    0 24px 34px rgba(10, 6, 2, 0.48),
+    inset 0 0 35px rgba(103, 67, 23, 0.22);
+}
+
+.crumple-crease {
+  position: absolute;
+  background: rgba(110, 73, 31, 0.34);
+  border-radius: 999px;
+}
+
+.crease-1 {
+  width: 72%;
+  height: 3px;
+  left: 12%;
+  top: 35%;
+  transform: rotate(19deg);
+}
+
+.crease-2 {
+  width: 64%;
+  height: 3px;
+  left: 20%;
+  top: 52%;
+  transform: rotate(-16deg);
+}
+
+.crease-3 {
+  width: 40%;
+  height: 3px;
+  left: 26%;
+  top: 66%;
+  transform: rotate(41deg);
+}
+
 .paper-poem {
   position: relative;
   width: 100%;
-  min-height: clamp(220px, 36vh, 330px);
+  min-height: clamp(240px, 38vh, 350px);
   padding: clamp(20px, 3vw, 34px) clamp(20px, 3vw, 34px);
   border-radius: var(--paper-radius);
   color: var(--paper-ink);
-  cursor: pointer;
   transform-style: preserve-3d;
+  overflow: hidden;
   background:
     linear-gradient(
       135deg,
@@ -245,27 +411,75 @@ body {
     inset 0 0 40px rgba(193, 141, 67, calc(var(--paper-crinkle) * 0.22));
 }
 
+.paper-fold {
+  position: absolute;
+  background: linear-gradient(140deg, rgba(207, 176, 129, 0.74), rgba(255, 255, 255, 0.15));
+  pointer-events: none;
+}
+
+.fold-top,
+.fold-bottom {
+  left: 0;
+  width: 100%;
+  height: 50%;
+}
+
+.fold-top {
+  top: 0;
+  transform-origin: center top;
+}
+
+.fold-bottom {
+  bottom: 0;
+  transform-origin: center bottom;
+}
+
+.fold-left,
+.fold-right {
+  top: 0;
+  width: 50%;
+  height: 100%;
+}
+
+.fold-left {
+  left: 0;
+  transform-origin: left center;
+}
+
+.fold-right {
+  right: 0;
+  transform-origin: right center;
+}
+
 .paper-title {
   margin: 0;
   font-family: 'Nanum Pen Script', cursive;
   font-size: clamp(1.5rem, 3vw, 2.2rem);
   letter-spacing: 0.02em;
   color: rgba(65, 42, 19, 0.86);
+  position: relative;
+  z-index: 2;
 }
 
 .paper-hint {
-  margin: 0.6rem 0 0;
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
   font-family: 'Manrope', sans-serif;
   letter-spacing: 0.06em;
-  font-size: 0.71rem;
+  font-size: 0.69rem;
   text-transform: uppercase;
-  color: rgba(73, 46, 18, 0.55);
+  color: rgba(73, 46, 18, 0.62);
 }
 
 .paper-lines {
   margin-top: 0.7rem;
   display: grid;
   gap: 0.65rem;
+  position: relative;
+  z-index: 2;
 }
 
 .paper-lines p {
@@ -275,16 +489,71 @@ body {
   color: rgba(47, 30, 13, 0.92);
 }
 
+.sunflower-cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 40px;
+  height: 40px;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.cursor-visible {
+  opacity: 1;
+}
+
+.cursor-petals,
+.cursor-core {
+  position: absolute;
+  border-radius: 50%;
+}
+
+.cursor-petals {
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(74, 42, 16, 0.95) 0 21%, transparent 21.5%),
+    repeating-conic-gradient(
+      from -8deg,
+      #f9cd66 0deg 10deg,
+      #f2b645 10deg 18deg,
+      #f8c75f 18deg 28deg,
+      #f1ad35 28deg 36deg
+    );
+  box-shadow: 0 0 0 3px rgba(248, 196, 92, 0.14);
+}
+
+.cursor-core {
+  inset: 30%;
+  background:
+    radial-gradient(circle at 40% 38%, rgba(129, 76, 31, 0.95), rgba(59, 34, 13, 1) 72%),
+    repeating-radial-gradient(circle at center, rgba(48, 29, 11, 0.95) 0 1px, transparent 1px 4px);
+}
+
 @media (max-width: 780px) {
   .slide-content {
     inset: auto 0 5.2vh;
   }
 
+  .paper-stage,
   .paper-poem {
-    min-height: clamp(220px, 42vh, 310px);
+    min-height: clamp(230px, 42vh, 320px);
   }
 
   .face-overlay {
     filter: sepia(0.2) saturate(0.75) contrast(1.04) brightness(0.9);
+  }
+
+  .intro-sky-track {
+    top: 7vh;
+    right: 7vw;
+    width: 84vw;
+  }
+
+  .intro-ground-sunflower {
+    left: 48%;
+    width: clamp(170px, 36vw, 230px);
   }
 }
