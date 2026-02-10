@@ -6,13 +6,22 @@ import MoonSunMorph from './MoonSunMorph';
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
 }
+function clamp(value, min, max) {
+  return Math.min(max, Math.max(min, value));
+}
 
 export default function IntroGate({ onComplete, onUnlockAudio, onStartIntroAudio, onStopIntroAudio, onInteractionCue }) {
   const dragX = useMotionValue(0);
   const [progress, setProgress] = useState(0);
   const [maxDrag, setMaxDrag] = useState(440);
   const [hasStarted, setHasStarted] = useState(false);
+export default function IntroGate({ onComplete, onUnlockAudio, onStartIntroAudio, onStopIntroAudio, onInteractionCue }) {
+  const dragX = useMotionValue(0);
+  const [progress, setProgress] = useState(0);
+  const [maxDrag, setMaxDrag] = useState(440);
+  const [hasStarted, setHasStarted] = useState(false);
   const [finishing, setFinishing] = useState(false);
+  const completeRef = useRef(false);
   const completeRef = useRef(false);
 
   const particles = useMemo(
@@ -24,9 +33,21 @@ export default function IntroGate({ onComplete, onUnlockAudio, onStartIntroAudio
         delay: ((index * 9) % 16) / 10,
         drift: ((index * 13) % 90) / 14
       })),
+      Array.from({ length: 20 }, (_, index) => ({
+        id: index,
+        left: ((index * 17) % 100) + 0.5,
+        duration: 7 + ((index * 5) % 8),
+        delay: ((index * 9) % 16) / 10,
+        drift: ((index * 13) % 90) / 14
+      })),
     []
   );
 
+  useEffect(() => {
+    const updateMaxDrag = () => {
+      const candidate = window.innerWidth * 0.62;
+      setMaxDrag(clamp(candidate, 190, 680));
+    };
   useEffect(() => {
     const updateMaxDrag = () => {
       const candidate = window.innerWidth * 0.62;
@@ -52,11 +73,32 @@ export default function IntroGate({ onComplete, onUnlockAudio, onStartIntroAudio
 
   useEffect(() => {
     if (progress < 0.985 || completeRef.current) {
+    updateMaxDrag();
+    window.addEventListener('resize', updateMaxDrag);
+
+    return () => {
+      window.removeEventListener('resize', updateMaxDrag);
+    };
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = dragX.on('change', (value) => {
+      const next = clamp(-value / maxDrag, 0, 1);
+      setProgress(next);
+    });
+
+    return () => unsubscribe();
+  }, [dragX, maxDrag]);
+
+  useEffect(() => {
+    if (progress < 0.985 || completeRef.current) {
       return;
     }
 
     completeRef.current = true;
+    completeRef.current = true;
     setFinishing(true);
+    onInteractionCue?.();
     onInteractionCue?.();
     onStopIntroAudio?.();
 
@@ -65,8 +107,25 @@ export default function IntroGate({ onComplete, onUnlockAudio, onStartIntroAudio
       ease: [0.2, 0.7, 0.2, 1]
     });
 
+    animate(dragX, -maxDrag, {
+      duration: 0.32,
+      ease: [0.2, 0.7, 0.2, 1]
+    });
+
     window.setTimeout(() => {
       onComplete?.();
+    }, 1500);
+  }, [dragX, maxDrag, onComplete, onInteractionCue, onStopIntroAudio, progress]);
+
+  const handleDragStart = async () => {
+    if (hasStarted || finishing) {
+      return;
+    }
+
+    setHasStarted(true);
+    await onUnlockAudio?.();
+    onStartIntroAudio?.();
+    onInteractionCue?.();
     }, 1500);
   }, [dragX, maxDrag, onComplete, onInteractionCue, onStopIntroAudio, progress]);
 
@@ -100,7 +159,11 @@ export default function IntroGate({ onComplete, onUnlockAudio, onStartIntroAudio
           key={particle.id}
           className="pollen-particle"
           style={{ left: `${particle.left}%`, opacity: 0.16 + progress * 0.54 }}
+          style={{ left: `${particle.left}%`, opacity: 0.16 + progress * 0.54 }}
           animate={{
+            y: ['0vh', '-78vh'],
+            x: [0, particle.drift, -particle.drift],
+            opacity: [0, 0.25 + progress * 0.6, 0]
             y: ['0vh', '-78vh'],
             x: [0, particle.drift, -particle.drift],
             opacity: [0, 0.25 + progress * 0.6, 0]
@@ -148,7 +211,11 @@ export default function IntroGate({ onComplete, onUnlockAudio, onStartIntroAudio
         />
       </motion.div>
 
-      <motion.p className="intro-caption" animate={{ opacity: finishing ? 0 : 1 }} transition={{ duration: 0.6 }}>
+      <motion.p
+        className="intro-caption"
+        animate={{ opacity: finishing ? 0 : 1 }}
+        transition={{ duration: 0.6 }}
+      >
         drag the moon to the left and wait for sunrise
       </motion.p>
 
@@ -156,6 +223,7 @@ export default function IntroGate({ onComplete, onUnlockAudio, onStartIntroAudio
         className="intro-blackout"
         initial={{ opacity: 0 }}
         animate={{ opacity: finishing ? 1 : 0 }}
+        transition={{ duration: 1.35, ease: [0.2, 0.7, 0.2, 1] }}
         transition={{ duration: 1.35, ease: [0.2, 0.7, 0.2, 1] }}
       />
     </section>
