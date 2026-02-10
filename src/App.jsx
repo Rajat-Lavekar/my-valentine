@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import CinematicSlide from './components/CinematicSlide';
 import IntroGate from './components/IntroGate';
+import SunflowerCursor from './components/SunflowerCursor';
 import { storySlides } from './data/slides';
 import { useActiveSlide } from './hooks/useActiveSlide';
 import { useCinematicAudio } from './hooks/useCinematicAudio';
@@ -63,9 +64,10 @@ export default function App() {
 
   return (
     <main className="app-shell">
+      <SunflowerCursor rootRef={rootRef} />
+
       <div className={`experience-root ${isHolding ? 'hold-active' : ''}`} ref={rootRef}>
         <IntroGate
-          interactionsRequired={6}
           onUnlockAudio={unlockAudio}
           onStartIntroAudio={startIntroBed}
           onInteractionCue={playInteractionCue}
