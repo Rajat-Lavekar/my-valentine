@@ -1,3 +1,5 @@
+import { WEB_ASSETS } from './webAssets';
+
 export const INTRO_AUDIO = '/assets/audio/intro-instrumental.mp3';
 export const INTRO_CUE_AUDIO = '/assets/audio/intro-cue.mp3';
 export const PAPER_AUDIO = '/assets/audio/paper-unfold.mp3';
@@ -7,7 +9,7 @@ export const storySlides = [
     id: 'slide-1',
     beatLabel: 'Beginning',
     mediaType: 'image',
-    background: '/assets/slides/01-sunflower-field.jpg',
+    background: WEB_ASSETS.sunflowerField,
     audio: '/assets/audio/01-sunflower-field.mp3',
     grade: 'linear-gradient(120deg, rgba(53, 30, 12, 0.55), rgba(220, 163, 75, 0.22))',
     poemTitle: 'for a reason',

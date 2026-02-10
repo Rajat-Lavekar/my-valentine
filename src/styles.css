@@ -2,9 +2,7 @@
 
 :root {
   --bg-night: #0f0906;
-  --warm-gold: #f6d18f;
   --paper-ink: #3f2b17;
-  --paper-shadow: rgba(32, 18, 8, 0.46);
 }
 
 * {
@@ -63,6 +61,7 @@ body.sunflower-cursor-enabled * {
   background: #08060a;
 }
 
+.intro-photo-layer,
 .intro-night-layer,
 .intro-day-layer,
 .intro-vignette,
@@ -75,20 +74,25 @@ body.sunflower-cursor-enabled * {
   pointer-events: none;
 }
 
+.intro-photo-layer {
+  background-size: cover;
+  background-position: center;
+}
+
 .intro-night-layer {
   background:
-    radial-gradient(circle at 80% 15%, rgba(142, 165, 214, 0.18), rgba(13, 11, 19, 0.94) 52%),
-    linear-gradient(150deg, rgba(15, 22, 44, 0.7), rgba(7, 5, 8, 0.96));
+    radial-gradient(circle at 80% 15%, rgba(142, 165, 214, 0.22), rgba(13, 11, 19, 0.95) 52%),
+    linear-gradient(150deg, rgba(15, 22, 44, 0.76), rgba(7, 5, 8, 0.98));
 }
 
 .intro-day-layer {
   background:
-    radial-gradient(circle at 18% 24%, rgba(255, 226, 151, 0.86), rgba(244, 182, 83, 0.2) 44%, transparent 58%),
-    linear-gradient(150deg, rgba(232, 176, 86, 0.54), rgba(120, 72, 33, 0.82));
+    radial-gradient(circle at 18% 24%, rgba(255, 226, 151, 0.82), rgba(244, 182, 83, 0.26) 44%, transparent 58%),
+    linear-gradient(150deg, rgba(232, 176, 86, 0.44), rgba(120, 72, 33, 0.64));
 }
 
 .intro-vignette {
-  background: radial-gradient(circle at center, transparent 42%, rgba(5, 3, 2, 0.7) 100%);
+  background: radial-gradient(circle at center, transparent 42%, rgba(5, 3, 2, 0.68) 100%);
 }
 
 .pollen-particle {
@@ -114,130 +118,56 @@ body.sunflower-cursor-enabled * {
 
 .moon-sun-orb {
   position: relative;
-  width: clamp(84px, 11vw, 126px);
+  width: clamp(90px, 11vw, 132px);
   aspect-ratio: 1;
   border-radius: 50%;
   touch-action: none;
   user-select: none;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 250, 235, 0.9), rgba(35, 35, 56, 0.42));
+  box-shadow: 0 22px 48px rgba(15, 12, 8, 0.45);
 }
 
 .orb-halo {
   position: absolute;
   inset: -24%;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 219, 146, 0.6), rgba(255, 219, 146, 0.01) 70%);
+  background: radial-gradient(circle, rgba(255, 219, 146, 0.5), rgba(255, 219, 146, 0.01) 70%);
 }
 
-.orb-body {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-}
-
-.orb-moon {
-  background:
-    radial-gradient(circle at 33% 30%, rgba(242, 245, 255, 0.95), rgba(196, 206, 232, 0.87) 62%, rgba(148, 160, 198, 0.84));
-  box-shadow: 0 12px 48px rgba(112, 137, 184, 0.35);
-}
-
-.orb-sun {
-  background:
-    radial-gradient(circle at 34% 32%, rgba(255, 248, 212, 0.99), rgba(253, 215, 124, 0.95) 52%, rgba(241, 166, 66, 0.9));
-  box-shadow: 0 16px 58px rgba(255, 189, 84, 0.55);
-}
-
-.moon-crater {
-  position: absolute;
-  border-radius: 50%;
-  background: rgba(126, 140, 176, 0.38);
-}
-
-.crater-a {
-  width: 17%;
-  height: 17%;
-  left: 30%;
-  top: 26%;
-}
-
-.crater-b {
-  width: 10%;
-  height: 10%;
-  left: 58%;
-  top: 39%;
-}
-
-.crater-c {
-  width: 13%;
-  height: 13%;
-  left: 41%;
-  top: 56%;
-}
-
-.sun-rays {
-  position: absolute;
-  inset: -36%;
-}
-
-.sun-rays span {
-  position: absolute;
-  left: calc(50% - 2px);
-  top: 0;
-  width: 4px;
-  height: 18px;
-  transform-origin: 50% 70px;
-  transform: rotate(var(--ray-angle));
-  border-radius: 999px;
-  background: linear-gradient(to bottom, rgba(255, 236, 171, 0.94), rgba(245, 166, 72, 0));
+.moon-sun-icon {
+  width: 58%;
+  height: 58%;
+  z-index: 1;
 }
 
 .intro-ground-sunflower {
   position: absolute;
   left: 52%;
-  bottom: 0;
-  width: clamp(180px, 28vw, 260px);
-  height: clamp(280px, 43vh, 400px);
+  bottom: -2%;
+  width: clamp(200px, 30vw, 290px);
+  height: clamp(300px, 45vh, 420px);
   transform-origin: bottom center;
 }
 
 .ground-stem {
   position: absolute;
   bottom: 0;
-  left: 40%;
+  left: 44%;
   width: clamp(10px, 1vw, 13px);
   height: 72%;
   border-radius: 999px;
-  background: linear-gradient(to top, rgba(44, 108, 39, 0.85), rgba(94, 172, 75, 0.96));
+  background: linear-gradient(to top, rgba(44, 108, 39, 0.86), rgba(94, 172, 75, 0.96));
   box-shadow: inset -2px 0 7px rgba(29, 72, 27, 0.5);
 }
 
-.ground-head {
+.ground-head-image {
   position: absolute;
-  left: 30%;
-  bottom: 64%;
-  width: clamp(94px, 13vw, 136px);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background:
-    radial-gradient(circle at 50% 50%, rgba(74, 42, 16, 0.96) 0 22%, transparent 22.5%),
-    repeating-conic-gradient(
-      from -9deg,
-      #f9cd66 0deg 11deg,
-      #f2b645 11deg 18deg,
-      #f8c75f 18deg 29deg,
-      #f1ad35 29deg 36deg
-    );
-  box-shadow:
-    0 0 0 7px rgba(248, 196, 92, 0.14),
-    0 24px 34px rgba(8, 5, 3, 0.34);
-}
-
-.ground-core {
-  position: absolute;
-  inset: 26%;
-  border-radius: 50%;
-  background:
-    radial-gradient(circle at 40% 38%, rgba(129, 76, 31, 0.95), rgba(59, 34, 13, 1) 72%),
-    repeating-radial-gradient(circle at center, rgba(48, 29, 11, 0.95) 0 1px, transparent 1px 4px);
+  width: clamp(140px, 19vw, 196px);
+  right: 0;
+  bottom: 54%;
+  filter: drop-shadow(0 14px 22px rgba(11, 6, 3, 0.42));
 }
 
 .intro-caption {
@@ -319,7 +249,7 @@ body.sunflower-cursor-enabled * {
 
 .poem-wrap {
   width: min(92vw, 580px);
-  perspective: 1200px;
+  perspective: 1500px;
 }
 
 .paper-stage {
@@ -333,72 +263,124 @@ body.sunflower-cursor-enabled * {
 
 .paper-crumple {
   position: absolute;
-  width: clamp(120px, 21vw, 170px);
+  width: clamp(120px, 20vw, 178px);
   aspect-ratio: 1;
   border-radius: 56% 44% 48% 52% / 62% 38% 57% 43%;
-  background:
-    radial-gradient(circle at 35% 30%, rgba(255, 250, 237, 0.94), rgba(226, 205, 165, 0.92) 56%, rgba(182, 150, 101, 0.92)),
-    repeating-linear-gradient(
-      38deg,
-      rgba(103, 72, 36, calc(var(--paper-crinkle) * 0.22)) 0px,
-      transparent 3px,
-      transparent 12px
-    );
+  background-size: cover;
+  background-position: center;
   box-shadow:
-    0 24px 34px rgba(10, 6, 2, 0.48),
+    0 24px 34px rgba(10, 6, 2, 0.5),
     inset 0 0 35px rgba(103, 67, 23, 0.22);
+  overflow: hidden;
 }
 
-.crumple-crease {
-  position: absolute;
-  background: rgba(110, 73, 31, 0.34);
-  border-radius: 999px;
+.web-paper-shell {
+  width: 100%;
+  min-height: clamp(240px, 38vh, 350px);
+  opacity: 0;
+  transform: scale(0.3) rotate(-18deg);
+  transform-origin: center;
 }
 
-.crease-1 {
-  width: 72%;
-  height: 3px;
-  left: 12%;
-  top: 35%;
-  transform: rotate(19deg);
+.web-paper-visible {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+  transition: opacity 0.4s ease, transform 0.45s ease;
 }
 
-.crease-2 {
-  width: 64%;
-  height: 3px;
-  left: 20%;
-  top: 52%;
-  transform: rotate(-16deg);
-}
-
-.crease-3 {
-  width: 40%;
-  height: 3px;
-  left: 26%;
-  top: 66%;
-  transform: rotate(41deg);
-}
-
-.paper-poem {
+.web-paper {
   position: relative;
   width: 100%;
   min-height: clamp(240px, 38vh, 350px);
-  padding: clamp(20px, 3vw, 34px) clamp(20px, 3vw, 34px);
-  border-radius: var(--paper-radius);
-  color: var(--paper-ink);
   transform-style: preserve-3d;
-  overflow: hidden;
+  border-radius: clamp(16px, 2vw, 24px);
+}
+
+.web-fold,
+.web-next-fold {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+
+.web-fold {
+  transform-origin: top center;
+  transition: transform 0.75s cubic-bezier(0.2, 0.7, 0.2, 1);
+  background:
+    linear-gradient(160deg, rgba(255, 251, 238, 0.92), rgba(236, 217, 179, 0.87)),
+    repeating-linear-gradient(
+      26deg,
+      rgba(102, 71, 37, calc(var(--paper-crinkle) * 0.1)) 0px,
+      transparent 4px,
+      transparent 15px
+    );
+  border-radius: clamp(16px, 2vw, 24px);
+  box-shadow:
+    0 34px 48px rgba(14, 8, 4, calc(0.24 + var(--paper-crinkle) * 0.34)),
+    inset 0 0 40px rgba(193, 141, 67, calc(var(--paper-crinkle) * 0.18));
+}
+
+.fold-00 {
+  transform-origin: center bottom;
+}
+
+[data-step='0'] .fold-00 {
+  transform: rotateX(-172deg);
+}
+
+[data-step='0'] .fold-01,
+[data-step='0'] .fold-02,
+[data-step='0'] .fold-03 {
+  transform: rotateX(170deg);
+}
+
+[data-step='1'] .fold-00 {
+  transform: rotateX(-22deg);
+}
+
+[data-step='1'] .fold-01,
+[data-step='1'] .fold-02,
+[data-step='1'] .fold-03 {
+  transform: rotateX(162deg);
+}
+
+[data-step='2'] .fold-00,
+[data-step='2'] .fold-01 {
+  transform: rotateX(-16deg);
+}
+
+[data-step='2'] .fold-02,
+[data-step='2'] .fold-03 {
+  transform: rotateX(156deg);
+}
+
+[data-step='3'] .fold-00,
+[data-step='3'] .fold-01,
+[data-step='3'] .fold-02 {
+  transform: rotateX(-10deg);
+}
+
+[data-step='3'] .fold-03 {
+  transform: rotateX(150deg);
+}
+
+[data-step='4'] .fold-00,
+[data-step='4'] .fold-01,
+[data-step='4'] .fold-02,
+[data-step='4'] .fold-03 {
+  transform: rotateX(0deg);
+}
+
+.paper-final-content {
+  position: absolute;
+  inset: 0;
+  padding: clamp(20px, 3vw, 34px);
+  border-radius: clamp(16px, 2vw, 24px);
   background:
     linear-gradient(
       135deg,
-      rgba(255, 250, 236, var(--paper-light)),
-      rgba(245, 230, 198, var(--paper-dark))
-    ),
-    repeating-linear-gradient(
-      26deg,
-      rgba(102, 71, 37, calc(var(--paper-crinkle) * 0.12)) 0px,
-      transparent 4px,
-      transparent 15px
+      rgba(255, 250, 236, calc(0.96 - var(--paper-crinkle) * 0.08)),
+      rgba(245, 230, 198, calc(0.88 - var(--paper-crinkle) * 0.18))
     ),
     repeating-linear-gradient(
       -33deg,
@@ -406,49 +388,6 @@ body.sunflower-cursor-enabled * {
       transparent 2px,
       transparent 11px
     );
-  box-shadow:
-    0 34px 48px rgba(14, 8, 4, var(--paper-shadow)),
-    inset 0 0 40px rgba(193, 141, 67, calc(var(--paper-crinkle) * 0.22));
-}
-
-.paper-fold {
-  position: absolute;
-  background: linear-gradient(140deg, rgba(207, 176, 129, 0.74), rgba(255, 255, 255, 0.15));
-  pointer-events: none;
-}
-
-.fold-top,
-.fold-bottom {
-  left: 0;
-  width: 100%;
-  height: 50%;
-}
-
-.fold-top {
-  top: 0;
-  transform-origin: center top;
-}
-
-.fold-bottom {
-  bottom: 0;
-  transform-origin: center bottom;
-}
-
-.fold-left,
-.fold-right {
-  top: 0;
-  width: 50%;
-  height: 100%;
-}
-
-.fold-left {
-  left: 0;
-  transform-origin: left center;
-}
-
-.fold-right {
-  right: 0;
-  transform-origin: right center;
 }
 
 .paper-title {
@@ -456,9 +395,7 @@ body.sunflower-cursor-enabled * {
   font-family: 'Nanum Pen Script', cursive;
   font-size: clamp(1.5rem, 3vw, 2.2rem);
   letter-spacing: 0.02em;
-  color: rgba(65, 42, 19, 0.86);
-  position: relative;
-  z-index: 2;
+  color: rgba(65, 42, 19, 0.88);
 }
 
 .paper-hint {
@@ -471,7 +408,10 @@ body.sunflower-cursor-enabled * {
   letter-spacing: 0.06em;
   font-size: 0.69rem;
   text-transform: uppercase;
-  color: rgba(73, 46, 18, 0.62);
+  color: rgba(73, 46, 18, 0.65);
+  background: rgba(253, 244, 220, 0.74);
+  padding: 0.26rem 0.58rem;
+  border-radius: 999px;
 }
 
 .paper-lines {
@@ -493,8 +433,8 @@ body.sunflower-cursor-enabled * {
   position: fixed;
   left: 0;
   top: 0;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   z-index: 9999;
   pointer-events: none;
   opacity: 0;
@@ -505,31 +445,12 @@ body.sunflower-cursor-enabled * {
   opacity: 1;
 }
 
-.cursor-petals,
-.cursor-core {
-  position: absolute;
-  border-radius: 50%;
-}
-
-.cursor-petals {
-  inset: 0;
-  background:
-    radial-gradient(circle at 50% 50%, rgba(74, 42, 16, 0.95) 0 21%, transparent 21.5%),
-    repeating-conic-gradient(
-      from -8deg,
-      #f9cd66 0deg 10deg,
-      #f2b645 10deg 18deg,
-      #f8c75f 18deg 28deg,
-      #f1ad35 28deg 36deg
-    );
-  box-shadow: 0 0 0 3px rgba(248, 196, 92, 0.14);
-}
-
-.cursor-core {
-  inset: 30%;
-  background:
-    radial-gradient(circle at 40% 38%, rgba(129, 76, 31, 0.95), rgba(59, 34, 13, 1) 72%),
-    repeating-radial-gradient(circle at center, rgba(48, 29, 11, 0.95) 0 1px, transparent 1px 4px);
+.cursor-sunflower-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 10px rgba(11, 6, 3, 0.3));
+  user-select: none;
 }
 
 @media (max-width: 780px) {
@@ -538,7 +459,8 @@ body.sunflower-cursor-enabled * {
   }
 
   .paper-stage,
-  .paper-poem {
+  .web-paper-shell,
+  .web-paper {
     min-height: clamp(230px, 42vh, 320px);
   }
 
@@ -554,6 +476,10 @@ body.sunflower-cursor-enabled * {
 
   .intro-ground-sunflower {
     left: 48%;
-    width: clamp(170px, 36vw, 230px);
+    width: clamp(170px, 36vw, 240px);
+  }
+
+  .ground-head-image {
+    width: clamp(116px, 24vw, 170px);
   }
 }

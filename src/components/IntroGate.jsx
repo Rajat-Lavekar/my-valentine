@@ -1,5 +1,7 @@
 import { animate, motion, useMotionValue } from 'framer-motion';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { WEB_ASSETS } from '../data/webAssets';
+import MoonSunMorph from './MoonSunMorph';
 
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
@@ -81,6 +83,14 @@ export default function IntroGate({ onComplete, onUnlockAudio, onStartIntroAudio
 
   return (
     <section className="intro-gate" aria-label="Intro">
+      <motion.div
+        className="intro-photo-layer"
+        style={{
+          backgroundImage: `url(${WEB_ASSETS.sunflowerField})`,
+          opacity: 0.15 + progress * 0.82,
+          filter: `saturate(${0.4 + progress * 0.8}) brightness(${0.34 + progress * 0.76})`
+        }}
+      />
       <motion.div className="intro-night-layer" style={{ opacity: 1 - progress }} />
       <motion.div className="intro-day-layer" style={{ opacity: progress }} />
       <div className="intro-vignette" />
@@ -104,11 +114,7 @@ export default function IntroGate({ onComplete, onUnlockAudio, onStartIntroAudio
         />
       ))}
 
-      <motion.div
-        className="intro-sky-track"
-        style={{ transform: `translateY(${(1 - progress) * -8}px)` }}
-        data-cursor-spin="true"
-      >
+      <motion.div className="intro-sky-track" style={{ transform: `translateY(${(1 - progress) * -8}px)` }}>
         <motion.div
           className="moon-sun-orb"
           drag="x"
@@ -119,17 +125,9 @@ export default function IntroGate({ onComplete, onUnlockAudio, onStartIntroAudio
           onDragStart={handleDragStart}
           data-cursor-spin="true"
         >
-          <motion.div className="orb-halo" style={{ opacity: 0.28 + progress * 0.58, scale: 0.85 + progress * 0.3 }} />
-          <motion.div className="orb-body orb-moon" style={{ opacity: 1 - progress }}>
-            <span className="moon-crater crater-a" />
-            <span className="moon-crater crater-b" />
-            <span className="moon-crater crater-c" />
-          </motion.div>
-          <motion.div className="orb-body orb-sun" style={{ opacity: progress }} />
-          <motion.div className="sun-rays" style={{ opacity: progress, scale: 0.7 + progress * 0.4 }}>
-            {Array.from({ length: 10 }).map((_, index) => (
-              <span key={index} style={{ '--ray-angle': `${index * 36}deg` }} />
-            ))}
+          <motion.div className="orb-halo" style={{ opacity: 0.32 + progress * 0.58, scale: 0.85 + progress * 0.3 }} />
+          <motion.div className="moon-sun-icon" style={{ color: progress > 0.5 ? '#f8ca70' : '#d8deef' }}>
+            <MoonSunMorph progress={progress} />
           </motion.div>
         </motion.div>
       </motion.div>
@@ -137,14 +135,17 @@ export default function IntroGate({ onComplete, onUnlockAudio, onStartIntroAudio
       <motion.div
         className="intro-ground-sunflower"
         style={{
-          rotate: `${26 - progress * 26}deg`,
-          y: `${16 - progress * 16}px`
+          rotate: `${30 - progress * 30}deg`,
+          y: `${18 - progress * 18}px`
         }}
       >
         <span className="ground-stem" />
-        <span className="ground-head">
-          <span className="ground-core" />
-        </span>
+        <motion.img
+          src={WEB_ASSETS.sunflowerPng}
+          alt="sunflower"
+          className="ground-head-image"
+          style={{ filter: `saturate(${0.72 + progress * 0.35}) brightness(${0.7 + progress * 0.45})` }}
+        />
       </motion.div>
 
       <motion.p className="intro-caption" animate={{ opacity: finishing ? 0 : 1 }} transition={{ duration: 0.6 }}>
