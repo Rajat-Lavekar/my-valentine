@@ -26,7 +26,6 @@ export default function PaperPoem({ title, lines, crinkle, isActive, onOpen }) {
     const safeCrinkle = Math.min(1, Math.max(0, crinkle));
 
     return {
-      // Crumple gradually relaxes across later slides to mirror emotional resolution.
       '--paper-crinkle': safeCrinkle,
       '--paper-shadow': 0.26 + safeCrinkle * 0.34,
       '--paper-light': 0.96 - safeCrinkle * 0.08,
@@ -110,7 +109,12 @@ export default function PaperPoem({ title, lines, crinkle, isActive, onOpen }) {
 
                             <AnimatePresence mode="wait">
                               {isOpen && (
-                                <motion.div key="paper-lines" className="paper-lines" initial="hidden" animate={isActive ? 'visible' : 'hidden'}>
+                                <motion.div
+                                  key="paper-lines"
+                                  className="paper-lines"
+                                  initial="hidden"
+                                  animate={isActive ? 'visible' : 'hidden'}
+                                >
                                   {lines.map((line, index) => (
                                     <motion.p key={`${title}-${index}`} custom={index} variants={lineVariants}>
                                       {line}
