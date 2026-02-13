@@ -1,297 +1,296 @@
 import { useCallback, useEffect, useRef } from 'react';
-import { INTRO_AUDIO, INTRO_CUE_AUDIO, PAPER_AUDIO } from '../data/slides';
+import { INTRO_AUDIO, SLIDES_AUDIO, OUTRO_AUDIO } from '../data/slides';
 
-function clamp(value, min, max) {
-  return Math.min(max, Math.max(min, value));
+// ── Volume targets for each zone ─────────────────────────────────────────────
+const INTRO_VOLUME = 0.45;
+const SLIDES_VOLUME = 0.5;
+const OUTRO_VOLUME = 0.5;
+
+// ── Smooth volume fading ─────────────────────────────────────────────────────
+function fadeVolume(audio, to, durationMs = 1200) {
+  if (!audio) {
+    return;
+  }
+
+  // Cancel any in-flight fade
+  if (audio._fadeId) {
+    cancelAnimationFrame(audio._fadeId);
+    audio._fadeId = null;
+  }
+
+  const from = audio.volume;
+
+  if (Math.abs(from - to) < 0.01) {
+    audio.volume = to;
+    if (to === 0) {
+      audio.pause();
+    }
+    return;
+  }
+
+  const start = performance.now();
+
+  function step() {
+    const elapsed = performance.now() - start;
+    const t = Math.min(elapsed / durationMs, 1);
+    // Ease-out curve for natural-sounding crossfades
+    const eased = 1 - (1 - t) * (1 - t);
+    audio.volume = Math.max(0, Math.min(1, from + (to - from) * eased));
+
+    if (t < 1) {
+      audio._fadeId = requestAnimationFrame(step);
+    } else {
+      audio._fadeId = null;
+      audio.volume = to;
+      if (to === 0) {
+        audio.pause();
+      }
+    }
+  }
+
+  audio._fadeId = requestAnimationFrame(step);
 }
 
+// ── Main hook ────────────────────────────────────────────────────────────────
 export function useCinematicAudio({ slides, activeSlideId, introComplete }) {
-  const contextRef = useRef(null);
-  const bufferCacheRef = useRef(new Map());
-  const loadingCacheRef = useRef(new Map());
-  const activeSlideRef = useRef(null);
-  // Story clips are one-shot by slide so revisiting a frame does not retrigger it.
-  const playedSlideRef = useRef(new Set());
-  const introInstanceRef = useRef(null);
+  const introAudioRef = useRef(null);
+  const slidesAudioRef = useRef(null);
+  const outroAudioRef = useRef(null);
+  const currentZoneRef = useRef(null);
+  const audioCtxRef = useRef(null);
 
-  const ensureContext = useCallback(async () => {
-    if (!contextRef.current) {
-      contextRef.current = new AudioContext();
-    }
+  // ── Helpers ──────────────────────────────────────────────────────────────
 
-    if (contextRef.current.state === 'suspended') {
-      await contextRef.current.resume();
-    }
-
-    return contextRef.current;
+  const createAudioElement = useCallback((src, loop = true) => {
+    const audio = new Audio();
+    audio.src = src;
+    audio.loop = loop;
+    audio.volume = 0;
+    audio.preload = 'auto';
+    return audio;
   }, []);
 
-  const loadBuffer = useCallback(
-    async (url) => {
-      if (!url) {
-        return null;
-      }
-
-      if (bufferCacheRef.current.has(url)) {
-        return bufferCacheRef.current.get(url);
-      }
-
-      if (!loadingCacheRef.current.has(url)) {
-        const loadingPromise = (async () => {
-          const context = await ensureContext();
-          const response = await fetch(url);
-          if (!response.ok) {
-            throw new Error(`Audio fetch failed for ${url}`);
-          }
-          const arrayBuffer = await response.arrayBuffer();
-          const audioBuffer = await context.decodeAudioData(arrayBuffer);
-          bufferCacheRef.current.set(url, audioBuffer);
-          return audioBuffer;
-        })();
-
-        loadingCacheRef.current.set(url, loadingPromise);
-      }
-
-      try {
-        return await loadingCacheRef.current.get(url);
-      } finally {
-        loadingCacheRef.current.delete(url);
-      }
-    },
-    [ensureContext]
-  );
-
-  const stopInstance = useCallback((instance, fadeOutSeconds = 0.55) => {
-    if (!instance || !instance.gain || !instance.source || !contextRef.current) {
-      return;
+  const ensureAudioCtx = useCallback(async () => {
+    if (!audioCtxRef.current) {
+      audioCtxRef.current = new (window.AudioContext || window.webkitAudioContext)();
     }
-
-    const context = contextRef.current;
-    const now = context.currentTime;
-
-    instance.gain.gain.cancelScheduledValues(now);
-    instance.gain.gain.setValueAtTime(instance.gain.gain.value, now);
-    instance.gain.gain.linearRampToValueAtTime(0.0001, now + fadeOutSeconds);
-
-    window.setTimeout(() => {
-      try {
-        instance.source.stop();
-      } catch {
-        // Stopping twice should not crash the experience.
-      }
-      try {
-        instance.source.disconnect();
-        instance.gain.disconnect();
-      } catch {
-        // Ignore disconnect errors during teardown.
-      }
-    }, Math.ceil(fadeOutSeconds * 1000) + 30);
+    if (audioCtxRef.current.state === 'suspended') {
+      await audioCtxRef.current.resume();
+    }
+    return audioCtxRef.current;
   }, []);
 
-  const spawnClip = useCallback(
-    async (url, options = {}) => {
-      const { loop = false, volume = 0.8, fadeInSeconds = 0.28 } = options;
-      const context = await ensureContext();
-      const buffer = await loadBuffer(url);
+  // ── Zone detection ───────────────────────────────────────────────────────
+  // Slides 1-2 → 'intro', slides 3 through N-1 → 'slides', last slide → 'outro'
 
-      if (!buffer) {
+  const getZone = useCallback(
+    (slideId) => {
+      if (!slideId) {
         return null;
       }
-
-      const source = context.createBufferSource();
-      const gain = context.createGain();
-      source.buffer = buffer;
-      source.loop = loop;
-
-      const targetVolume = clamp(volume, 0, 1);
-      gain.gain.setValueAtTime(0.0001, context.currentTime);
-      gain.gain.linearRampToValueAtTime(targetVolume, context.currentTime + fadeInSeconds);
-
-      source.connect(gain);
-      gain.connect(context.destination);
-      source.start(0);
-
-      return { source, gain, url };
+      const idx = slides.findIndex((s) => s.id === slideId);
+      if (idx < 0) {
+        return null;
+      }
+      if (idx <= 1) {
+        return 'intro';
+      }
+      if (idx >= slides.length - 1) {
+        return 'outro';
+      }
+      return 'slides';
     },
-    [ensureContext, loadBuffer]
+    [slides]
   );
+
+  // ── Public API ───────────────────────────────────────────────────────────
 
   const unlockAudio = useCallback(async () => {
     try {
-      await ensureContext();
-    } catch (error) {
-      console.warn('Unable to unlock audio context', error);
+      await ensureAudioCtx();
+    } catch {
+      // AudioContext creation can fail on some browsers; non-critical.
     }
-  }, [ensureContext]);
 
-  const startIntroBed = useCallback(async () => {
-    if (introInstanceRef.current || !INTRO_AUDIO) {
+    // Pre-create audio elements so they are ready when the zone kicks in
+    if (!introAudioRef.current) {
+      introAudioRef.current = createAudioElement(INTRO_AUDIO, true);
+    }
+    if (!slidesAudioRef.current) {
+      slidesAudioRef.current = createAudioElement(SLIDES_AUDIO, true);
+    }
+    if (!outroAudioRef.current) {
+      outroAudioRef.current = createAudioElement(OUTRO_AUDIO, false);
+    }
+  }, [createAudioElement, ensureAudioCtx]);
+
+  // Called on first drag – starts the intro music immediately
+  const startIntroBed = useCallback(() => {
+    const audio = introAudioRef.current;
+    if (!audio || !audio.paused) {
       return;
     }
 
-    try {
-      const instance = await spawnClip(INTRO_AUDIO, {
-        loop: true,
-        volume: 0.42,
-        fadeInSeconds: 1.1
-      });
+    audio.currentTime = 0;
+    audio.play().catch(() => {});
+    fadeVolume(audio, INTRO_VOLUME, 1400);
+  }, []);
 
-      introInstanceRef.current = instance;
-    } catch (error) {
-      console.warn('Unable to start intro bed', error);
-    }
-  }, [spawnClip]);
+  // No-op: the zone system handles when to stop each track
+  const stopIntroBed = useCallback(() => {}, []);
 
-  const stopIntroBed = useCallback(() => {
-    if (!introInstanceRef.current) {
+  // ── Zone-based crossfades ────────────────────────────────────────────────
+  useEffect(() => {
+    if (!introComplete || !activeSlideId) {
       return;
     }
 
-    stopInstance(introInstanceRef.current, 1.1);
-    introInstanceRef.current = null;
-  }, [stopInstance]);
+    const newZone = getZone(activeSlideId);
+    if (newZone === currentZoneRef.current) {
+      return;
+    }
+
+    const prev = currentZoneRef.current;
+    currentZoneRef.current = newZone;
+
+    // Fade out previous zone
+    if (prev === 'intro') {
+      fadeVolume(introAudioRef.current, 0, 1200);
+    }
+    if (prev === 'slides') {
+      fadeVolume(slidesAudioRef.current, 0, 1200);
+    }
+    if (prev === 'outro') {
+      fadeVolume(outroAudioRef.current, 0, 1200);
+    }
+
+    // Fade in new zone
+    if (newZone === 'intro') {
+      const a = introAudioRef.current;
+      if (a) {
+        if (a.paused) {
+          a.play().catch(() => {});
+        }
+        fadeVolume(a, INTRO_VOLUME, 1000);
+      }
+    }
+
+    if (newZone === 'slides') {
+      const a = slidesAudioRef.current;
+      if (a) {
+        if (a.paused) {
+          a.currentTime = 0;
+          a.play().catch(() => {});
+        }
+        fadeVolume(a, SLIDES_VOLUME, 1400);
+      }
+    }
+
+    if (newZone === 'outro') {
+      const a = outroAudioRef.current;
+      if (a) {
+        a.currentTime = 0;
+        a.play().catch(() => {});
+        fadeVolume(a, OUTRO_VOLUME, 1400);
+      }
+    }
+  }, [activeSlideId, introComplete, getZone]);
+
+  // ── SFX: gentle chime (oscillator-based, no audio files needed) ──────────
 
   const playInteractionCue = useCallback(async () => {
-    if (!INTRO_CUE_AUDIO) {
+    let ctx;
+    try {
+      ctx = await ensureAudioCtx();
+    } catch {
       return;
     }
 
-    try {
-      const instance = await spawnClip(INTRO_CUE_AUDIO, {
-        loop: false,
-        volume: 0.53,
-        fadeInSeconds: 0.03
-      });
+    const now = ctx.currentTime;
 
-      if (instance?.source) {
-        instance.source.onended = () => {
-          try {
-            instance.source.disconnect();
-            instance.gain.disconnect();
-          } catch {
-            // Ignore cue teardown errors.
-          }
-        };
-      }
-    } catch (error) {
-      console.warn('Unable to play interaction cue', error);
-    }
-  }, [spawnClip]);
+    const osc1 = ctx.createOscillator();
+    const osc2 = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc1.type = 'sine';
+    osc1.frequency.setValueAtTime(698, now);
+    osc1.frequency.exponentialRampToValueAtTime(523, now + 0.3);
+
+    osc2.type = 'sine';
+    osc2.frequency.setValueAtTime(880, now);
+    osc2.frequency.exponentialRampToValueAtTime(659, now + 0.35);
+
+    gain.gain.setValueAtTime(0.07, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+
+    osc1.connect(gain);
+    osc2.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc1.start(now);
+    osc2.start(now + 0.04);
+    osc1.stop(now + 0.5);
+    osc2.stop(now + 0.55);
+  }, [ensureAudioCtx]);
+
+  // ── SFX: paper crinkle (white noise burst) ──────────────────────────────
 
   const playPaperFx = useCallback(async () => {
-    if (!PAPER_AUDIO) {
-      return;
-    }
-
+    let ctx;
     try {
-      const instance = await spawnClip(PAPER_AUDIO, {
-        loop: false,
-        volume: 0.36,
-        fadeInSeconds: 0.02
-      });
-
-      if (instance?.source) {
-        instance.source.onended = () => {
-          try {
-            instance.source.disconnect();
-            instance.gain.disconnect();
-          } catch {
-            // Ignore paper cue teardown errors.
-          }
-        };
-      }
-    } catch (error) {
-      console.warn('Unable to play paper SFX', error);
-    }
-  }, [spawnClip]);
-
-  useEffect(() => {
-    if (!introComplete) {
-      if (activeSlideRef.current) {
-        stopInstance(activeSlideRef.current.instance, 0.35);
-        activeSlideRef.current = null;
-      }
+      ctx = await ensureAudioCtx();
+    } catch {
       return;
     }
 
-    if (!activeSlideId) {
-      if (activeSlideRef.current) {
-        stopInstance(activeSlideRef.current.instance, 0.5);
-        activeSlideRef.current = null;
-      }
-      return;
+    const now = ctx.currentTime;
+    const len = Math.round(ctx.sampleRate * 0.15);
+    const buffer = ctx.createBuffer(1, len, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+
+    for (let i = 0; i < len; i++) {
+      data[i] = (Math.random() * 2 - 1) * 0.5;
     }
 
-    const currentInstance = activeSlideRef.current;
-    if (currentInstance && currentInstance.slideId === activeSlideId) {
-      return;
-    }
+    const noise = ctx.createBufferSource();
+    noise.buffer = buffer;
 
-    if (currentInstance) {
-      stopInstance(currentInstance.instance, 0.5);
-      activeSlideRef.current = null;
-    }
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.setValueAtTime(3200, now);
+    filter.Q.setValueAtTime(0.7, now);
 
-    const slide = slides.find((item) => item.id === activeSlideId);
-    if (!slide?.audio || playedSlideRef.current.has(activeSlideId)) {
-      return;
-    }
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.1, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
 
-    let cancelled = false;
+    noise.connect(filter);
+    filter.connect(gain);
+    gain.connect(ctx.destination);
+    noise.start(now);
+    noise.stop(now + 0.18);
+  }, [ensureAudioCtx]);
 
-    (async () => {
-      try {
-        const instance = await spawnClip(slide.audio, {
-          loop: false,
-          volume: 0.9,
-          fadeInSeconds: 0.36
-        });
-
-        if (!instance) {
-          return;
-        }
-
-        if (cancelled) {
-          stopInstance(instance, 0.08);
-          return;
-        }
-
-        playedSlideRef.current.add(activeSlideId);
-        activeSlideRef.current = { slideId: activeSlideId, instance };
-
-        instance.source.onended = () => {
-          if (activeSlideRef.current?.slideId === activeSlideId) {
-            activeSlideRef.current = null;
-          }
-          try {
-            instance.source.disconnect();
-            instance.gain.disconnect();
-          } catch {
-            // Ignore teardown disconnect errors.
-          }
-        };
-      } catch (error) {
-        console.warn(`Unable to play clip for ${activeSlideId}`, error);
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [activeSlideId, introComplete, slides, spawnClip, stopInstance]);
+  // ── Teardown ─────────────────────────────────────────────────────────────
 
   useEffect(
     () => () => {
-      stopIntroBed();
-      if (activeSlideRef.current) {
-        stopInstance(activeSlideRef.current.instance, 0.2);
-      }
+      [introAudioRef, slidesAudioRef, outroAudioRef].forEach((ref) => {
+        if (ref.current) {
+          if (ref.current._fadeId) {
+            cancelAnimationFrame(ref.current._fadeId);
+          }
+          ref.current.pause();
+          ref.current.src = '';
+          ref.current = null;
+        }
+      });
 
-      if (contextRef.current && contextRef.current.state !== 'closed') {
-        contextRef.current.close();
+      if (audioCtxRef.current && audioCtxRef.current.state !== 'closed') {
+        audioCtxRef.current.close();
       }
     },
-    [stopInstance, stopIntroBed]
+    []
   );
 
   return {

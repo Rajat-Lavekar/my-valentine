@@ -1,8 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;700&family=Manrope:wght@400;500&family=Nanum+Pen+Script&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;700&family=Manrope:wght@400;500&family=Nanum+Pen+Script&family=Great+Vibes&display=swap');
 
 :root {
   --bg-night: #0f0906;
   --paper-ink: #3f2b17;
+  --warm-glow: rgba(255, 200, 100, 0.12);
 }
 
 * {
@@ -49,6 +50,8 @@ body.sunflower-cursor-enabled * {
 .hold-active {
   filter: saturate(0.96);
 }
+
+/* ── Intro Gate & Slides ─────────────────────────────────────────────────── */
 
 .intro-gate,
 .cinematic-slide {
@@ -109,6 +112,8 @@ body.sunflower-cursor-enabled * {
   filter: blur(0.2px);
 }
 
+/* ── Orbit track for moon-sun drag ───────────────────────────────────────── */
+
 .intro-orbit-shell {
   position: absolute;
   top: max(4vh, 26px);
@@ -149,6 +154,8 @@ body.sunflower-cursor-enabled * {
   z-index: 1;
 }
 
+/* ── Intro sunflower ─────────────────────────────────────────────────────── */
+
 .intro-sunflower-anchor {
   position: absolute;
   left: 50%;
@@ -176,6 +183,8 @@ body.sunflower-cursor-enabled * {
   mix-blend-mode: normal;
   transform: translateZ(0);
 }
+
+/* ── Thought cloud ───────────────────────────────────────────────────────── */
 
 .intro-thought-cloud {
   position: absolute;
@@ -232,6 +241,8 @@ body.sunflower-cursor-enabled * {
   top: calc(100% + 40px);
 }
 
+/* ── Slide media / layers ────────────────────────────────────────────────── */
+
 .slide-media {
   position: absolute;
   inset: -3%;
@@ -274,6 +285,23 @@ body.sunflower-cursor-enabled * {
   box-shadow: 0 0 34px rgba(29, 15, 7, 0.2);
   pointer-events: none;
 }
+
+/* ── Slide counter ───────────────────────────────────────────────────────── */
+
+.slide-counter {
+  position: absolute;
+  top: max(2.4vh, 16px);
+  right: max(2.4vw, 16px);
+  font-family: 'Manrope', sans-serif;
+  font-size: clamp(0.6rem, 1.1vw, 0.78rem);
+  letter-spacing: 0.16em;
+  text-transform: lowercase;
+  color: rgba(248, 228, 190, 0.5);
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* ── Slide content / poem area ───────────────────────────────────────────── */
 
 .slide-content {
   position: absolute;
@@ -323,7 +351,22 @@ body.sunflower-cursor-enabled * {
   box-shadow:
     0 24px 34px rgba(10, 6, 2, 0.48),
     inset 0 0 35px rgba(103, 67, 23, 0.22);
+  background-size: cover;
+  background-blend-mode: overlay;
+  animation: paper-breathe 3s ease-in-out infinite;
 }
+
+@keyframes paper-breathe {
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    transform: scale(1.03) rotate(-1.5deg);
+  }
+}
+
+/* ── Paper fold system ───────────────────────────────────────────────────── */
 
 .web-paper-shell {
   width: 100%;
@@ -460,6 +503,17 @@ body.sunflower-cursor-enabled * {
   font-size: 0.69rem;
   text-transform: uppercase;
   color: rgba(73, 46, 18, 0.62);
+  animation: hint-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes hint-pulse {
+  0%,
+  100% {
+    opacity: 0.62;
+  }
+  50% {
+    opacity: 0.88;
+  }
 }
 
 .paper-lines {
@@ -476,6 +530,80 @@ body.sunflower-cursor-enabled * {
   line-height: 1.42;
   color: rgba(47, 30, 13, 0.92);
 }
+
+/* ── Floating hearts (last slide) ────────────────────────────────────────── */
+
+.floating-heart {
+  position: absolute;
+  bottom: -6vh;
+  pointer-events: none;
+  color: rgba(220, 72, 72, 0.6);
+  filter: blur(0.3px);
+  z-index: 1;
+}
+
+/* ── Valentine's Day finale ──────────────────────────────────────────────── */
+
+.cinematic-slide-finale {
+  background: radial-gradient(ellipse at center, rgba(38, 18, 10, 0.9), rgba(12, 6, 4, 0.98));
+}
+
+.valentine-finale {
+  position: absolute;
+  top: max(4vh, 28px);
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.finale-heart {
+  display: inline-block;
+  font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+  color: rgba(220, 72, 72, 0.85);
+  animation: heartbeat 1.6s ease-in-out infinite;
+  filter: drop-shadow(0 4px 12px rgba(200, 50, 50, 0.3));
+}
+
+@keyframes heartbeat {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  14% {
+    transform: scale(1.16);
+  }
+  28% {
+    transform: scale(1);
+  }
+  42% {
+    transform: scale(1.1);
+  }
+  56% {
+    transform: scale(1);
+  }
+}
+
+.finale-text {
+  margin: 0.4rem 0 0;
+  font-family: 'Great Vibes', cursive;
+  font-size: clamp(1.8rem, 4.5vw, 3.2rem);
+  color: rgba(255, 220, 170, 0.92);
+  text-shadow: 0 4px 18px rgba(200, 130, 50, 0.3);
+  letter-spacing: 0.02em;
+}
+
+.finale-subtext {
+  margin: 0.3rem 0 0;
+  font-family: 'Manrope', sans-serif;
+  font-size: clamp(0.68rem, 1.4vw, 0.88rem);
+  letter-spacing: 0.08em;
+  text-transform: lowercase;
+  color: rgba(248, 220, 178, 0.6);
+}
+
+/* ── Custom cursor ───────────────────────────────────────────────────────── */
 
 .fancy-cursor-outer,
 .fancy-cursor-inner {
@@ -511,6 +639,8 @@ body.sunflower-cursor-enabled * {
 .cursor-visible {
   opacity: 1;
 }
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
 
 @media (max-width: 780px) {
   .slide-content {
@@ -562,5 +692,18 @@ body.sunflower-cursor-enabled * {
   .thought-tail-3 {
     left: 61%;
     top: calc(100% + 37px);
+  }
+
+  .valentine-finale {
+    top: max(2.5vh, 18px);
+  }
+
+  .finale-text {
+    font-size: clamp(1.5rem, 6vw, 2.4rem);
+  }
+
+  .slide-counter {
+    top: max(1.8vh, 12px);
+    right: max(3vw, 12px);
   }
 }

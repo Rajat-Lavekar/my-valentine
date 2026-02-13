@@ -31,7 +31,6 @@ export default function App() {
   });
 
   const handleIntroComplete = useCallback(() => {
-    // Intro gates the entire story, so we only unlock scroll after the fade-out lands.
     setIntroComplete(true);
 
     const rootNode = rootRef.current;
@@ -40,7 +39,6 @@ export default function App() {
     }
 
     window.requestAnimationFrame(() => {
-      // Start the cinematic timeline at the first narrative frame.
       rootNode.scrollTo({
         top: window.innerHeight,
         behavior: 'smooth'
@@ -68,7 +66,6 @@ export default function App() {
       return;
     }
 
-    // Body stays fixed and the internal container owns all timeline scrolling.
     rootNode.style.overflowY = introComplete ? 'auto' : 'hidden';
     document.body.style.overflow = 'hidden';
 
@@ -98,6 +95,8 @@ export default function App() {
   const viewportHeight = typeof window === 'undefined' ? 0 : window.innerHeight;
   const introIsVisible = scrollTop < viewportHeight * 0.72;
 
+  const totalSlides = storySlides.length;
+
   return (
     <main className="app-shell">
       <SunflowerCursor rootRef={rootRef} />
@@ -113,11 +112,14 @@ export default function App() {
           onComplete={handleIntroComplete}
         />
 
-        {storySlides.map((slide) => (
+        {storySlides.map((slide, index) => (
           <CinematicSlide
             key={slide.id}
             slide={slide}
+            slideIndex={index}
+            totalSlides={totalSlides}
             isActive={activeSlideId === slide.id}
+            isLast={index === totalSlides - 1}
             onPaperOpen={playPaperFx}
           />
         ))}

@@ -210,8 +210,8 @@ export default function IntroGate({
       >
         <p>
           {isComplete
-            ? 'sun is awake, scroll to begin the story. drag back to moon to reset.'
-            : 'drag the moon to sun so the sunflower starts telling you a story'}
+            ? 'the sun is awake now... scroll down to begin our story together'
+            : 'gently drag the moon across the sky and let the sunflower whisper our story to you'}
         </p>
         <span className="thought-tail thought-tail-1" />
         <span className="thought-tail thought-tail-2" />

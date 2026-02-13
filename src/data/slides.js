@@ -1,16 +1,20 @@
 import { WEB_ASSETS } from './webAssets';
 
-export const INTRO_AUDIO = '/assets/audio/intro-instrumental.mp3';
-export const INTRO_CUE_AUDIO = '/assets/audio/intro-cue.mp3';
-export const PAPER_AUDIO = '/assets/audio/paper-unfold.mp3';
+// ── Audio tracks (zone-based) ────────────────────────────────────────────────
+// Zone 1 – intro: plays during the moon-to-sun drag and through slides 1-2
+// Zone 2 – story: starts on slide 3, loops continuously until the last slide
+// Zone 3 – outro: fades in on the final slide
+export const INTRO_AUDIO = '/assets/audio/intro_instrumental.mov';
+export const SLIDES_AUDIO = '/assets/audio/slides_music.mov';
+export const OUTRO_AUDIO = '/assets/audio/outro-instrumental.mov';
 
+// ── Story slides ─────────────────────────────────────────────────────────────
 export const storySlides = [
   {
     id: 'slide-1',
     beatLabel: 'Beginning',
     mediaType: 'image',
     background: WEB_ASSETS.sunflowerField,
-    audio: '/assets/audio/01-sunflower-field.mp3',
     grade: 'linear-gradient(120deg, rgba(53, 30, 12, 0.55), rgba(220, 163, 75, 0.22))',
     poemTitle: 'for a reason',
     poemLines: [
@@ -29,7 +33,6 @@ export const storySlides = [
     beatLabel: 'Falling Star',
     mediaType: 'image',
     background: WEB_ASSETS.slideTwoFrame,
-    audio: '/assets/audio/02-falling-star.mp3',
     grade: 'linear-gradient(120deg, rgba(10, 8, 16, 0.7), rgba(131, 99, 56, 0.22))',
     poemTitle: 'quiet admiration',
     poemLines: [
@@ -46,8 +49,7 @@ export const storySlides = [
     id: 'slide-3',
     beatLabel: 'Rejection',
     mediaType: 'image',
-    background: '/assets/slides/03-flower-rejection.jpg',
-    audio: '/assets/audio/03-flower-rejection.mp3',
+    background: WEB_ASSETS.slideThreeFrame,
     grade: 'linear-gradient(115deg, rgba(46, 20, 18, 0.62), rgba(210, 148, 88, 0.25))',
     poemTitle: 'sad, then smiling',
     poemLines: [
@@ -65,8 +67,7 @@ export const storySlides = [
     id: 'slide-4',
     beatLabel: 'Waiting',
     mediaType: 'image',
-    background: '/assets/slides/04-below-house.jpg',
-    audio: '/assets/audio/04-below-house.mp3',
+    background: WEB_ASSETS.slideFourFrame,
     grade: 'linear-gradient(115deg, rgba(7, 10, 19, 0.72), rgba(130, 88, 43, 0.3))',
     poemTitle: 'restraint',
     poemLines: [
@@ -83,8 +84,7 @@ export const storySlides = [
     id: 'slide-5',
     beatLabel: 'Classroom Glance',
     mediaType: 'image',
-    background: '/assets/slides/05-classroom.jpg',
-    audio: '/assets/audio/05-classroom.mp3',
+    background: WEB_ASSETS.slideFiveFrame,
     grade: 'linear-gradient(110deg, rgba(23, 18, 10, 0.55), rgba(180, 130, 69, 0.2))',
     poemTitle: 'mutual awareness',
     poemLines: [
@@ -102,8 +102,7 @@ export const storySlides = [
     id: 'slide-6',
     beatLabel: 'Dream',
     mediaType: 'image',
-    background: '/assets/slides/06-dream-black-white.jpg',
-    audio: '/assets/audio/06-dream.mp3',
+    background: WEB_ASSETS.slideSixFrame,
     grade: 'linear-gradient(110deg, rgba(12, 12, 12, 0.72), rgba(198, 184, 151, 0.18))',
     poemTitle: 'yearning',
     poemLines: [
@@ -120,8 +119,7 @@ export const storySlides = [
     id: 'slide-7',
     beatLabel: 'Firecrackers',
     mediaType: 'image',
-    background: '/assets/slides/07-firecrackers.jpg',
-    audio: '/assets/audio/07-firecrackers.mp3',
+    background: WEB_ASSETS.slideSevenFrame,
     grade: 'linear-gradient(120deg, rgba(32, 12, 8, 0.58), rgba(235, 144, 79, 0.22))',
     poemTitle: 'present & future',
     poemLines: [
@@ -139,9 +137,8 @@ export const storySlides = [
     id: 'slide-8',
     beatLabel: 'To Be Continued',
     mediaType: 'image',
-    background: '/assets/slides/08-shoulder-rest.jpg',
-    audio: '/assets/audio/08-outro-instrumental.mp3',
-    grade: 'linear-gradient(115deg, rgba(11, 8, 7, 0.62), rgba(198, 151, 98, 0.2))',
+    background: WEB_ASSETS.slideEightFrame,
+    grade: 'linear-gradient(115deg, rgba(11, 8, 7, 0.52), rgba(198, 151, 98, 0.18))',
     poemTitle: 'contentment',
     poemLines: [
       'Your shoulder became home before I noticed.',
