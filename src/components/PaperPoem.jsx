@@ -18,6 +18,7 @@ const lineVariants = {
 
 export default function PaperPoem({ title, lines, crinkle, isActive, onOpen }) {
   const [isOpening, setIsOpening] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [step, setStep] = useState(0);
   const timersRef = useRef([]);
@@ -42,11 +43,38 @@ export default function PaperPoem({ title, lines, crinkle, isActive, onOpen }) {
     []
   );
 
-  const handleOpen = () => {
-    if (isOpen || isOpening) {
+  const clearTimers = () => {
+    timersRef.current.forEach((timer) => window.clearTimeout(timer));
+    timersRef.current = [];
+  };
+
+  const handleToggle = () => {
+    if (isOpening || isClosing) {
       return;
     }
 
+    clearTimers();
+
+    if (isOpen) {
+      setIsClosing(true);
+      setIsOpen(false);
+
+      [3, 2, 1, 0].forEach((nextStep, index) => {
+        const timer = window.setTimeout(() => {
+          setStep(nextStep);
+        }, 180 * (index + 1));
+        timersRef.current.push(timer);
+      });
+
+      const finishTimer = window.setTimeout(() => {
+        setIsClosing(false);
+        setStep(0);
+      }, 840);
+      timersRef.current.push(finishTimer);
+      return;
+    }
+
+    setStep(0);
     setIsOpening(true);
     onOpen?.();
 
@@ -60,6 +88,7 @@ export default function PaperPoem({ title, lines, crinkle, isActive, onOpen }) {
     const finishTimer = window.setTimeout(() => {
       setIsOpening(false);
       setIsOpen(true);
+      setStep(4);
     }, 1100);
     timersRef.current.push(finishTimer);
   };
@@ -70,17 +99,17 @@ export default function PaperPoem({ title, lines, crinkle, isActive, onOpen }) {
         className="paper-stage"
         role="button"
         tabIndex={0}
-        onClick={handleOpen}
+        onClick={handleToggle}
         onKeyDown={(event) => {
           if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault();
-            handleOpen();
+            handleToggle();
           }
         }}
         data-cursor-spin="true"
       >
         <AnimatePresence>
-          {!isOpen && !isOpening && (
+          {!isOpen && !isOpening && !isClosing && (
             <motion.div
               className="paper-crumple"
               key="paper-crumple"
@@ -95,7 +124,7 @@ export default function PaperPoem({ title, lines, crinkle, isActive, onOpen }) {
           )}
         </AnimatePresence>
 
-        <motion.div className={`web-paper-shell ${isOpening || isOpen ? 'web-paper-visible' : ''}`} data-step={step}>
+        <motion.div className={`web-paper-shell ${isOpening || isOpen || isClosing ? 'web-paper-visible' : ''}`} data-step={step}>
           <div className="web-paper">
             <div className="web-fold fold-00">
               <div className="web-next-fold">

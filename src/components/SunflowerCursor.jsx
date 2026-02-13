@@ -4,33 +4,32 @@ import { useEffect, useState } from 'react';
 export default function SunflowerCursor({ rootRef }) {
   const x = useMotionValue(-120);
   const y = useMotionValue(-120);
-  const springX = useSpring(x, { stiffness: 460, damping: 34, mass: 0.24 });
-  const springY = useSpring(y, { stiffness: 460, damping: 34, mass: 0.24 });
+
+  const outerX = useSpring(x, { stiffness: 760, damping: 48, mass: 0.14 });
+  const outerY = useSpring(y, { stiffness: 760, damping: 48, mass: 0.14 });
+  const innerX = useSpring(x, { stiffness: 1200, damping: 62, mass: 0.08 });
+  const innerY = useSpring(y, { stiffness: 1200, damping: 62, mass: 0.08 });
 
   const [isVisible, setIsVisible] = useState(false);
-  const [isSpinning, setIsSpinning] = useState(false);
+  const [isActiveTarget, setIsActiveTarget] = useState(false);
   const [enabled, setEnabled] = useState(false);
 
   useEffect(() => {
     const pointerMedia = window.matchMedia('(pointer: fine)');
-    const canUseCursor = pointerMedia.matches;
-    setEnabled(canUseCursor);
+    setEnabled(pointerMedia.matches);
 
-    const mediaListener = (event) => {
-      setEnabled(event.matches);
-    };
-
+    const onChange = (event) => setEnabled(event.matches);
     if (pointerMedia.addEventListener) {
-      pointerMedia.addEventListener('change', mediaListener);
+      pointerMedia.addEventListener('change', onChange);
     } else {
-      pointerMedia.addListener(mediaListener);
+      pointerMedia.addListener(onChange);
     }
 
     return () => {
       if (pointerMedia.removeEventListener) {
-        pointerMedia.removeEventListener('change', mediaListener);
+        pointerMedia.removeEventListener('change', onChange);
       } else {
-        pointerMedia.removeListener(mediaListener);
+        pointerMedia.removeListener(onChange);
       }
     };
   }, []);
@@ -56,17 +55,17 @@ export default function SunflowerCursor({ rootRef }) {
     const target = rootNode || window;
 
     const onPointerMove = (event) => {
-      x.set(event.clientX - 20);
-      y.set(event.clientY - 20);
+      x.set(event.clientX);
+      y.set(event.clientY);
       setIsVisible(true);
 
-      const rotateTarget = event.target?.closest?.('[data-cursor-spin="true"]');
-      setIsSpinning(Boolean(rotateTarget));
+      const interactive = event.target?.closest?.('[data-cursor-spin="true"], button, [role="button"], a');
+      setIsActiveTarget(Boolean(interactive));
     };
 
     const onPointerLeave = () => {
       setIsVisible(false);
-      setIsSpinning(false);
+      setIsActiveTarget(false);
     };
 
     target.addEventListener('pointermove', onPointerMove);
@@ -83,14 +82,19 @@ export default function SunflowerCursor({ rootRef }) {
   }
 
   return (
-    <motion.div
-      className={`sunflower-cursor ${isVisible ? 'cursor-visible' : ''}`}
-      style={{ x: springX, y: springY }}
-      animate={isSpinning ? { rotate: [0, 360] } : { rotate: 0 }}
-      transition={isSpinning ? { duration: 1.25, ease: 'linear', repeat: Infinity } : { duration: 0.2 }}
-    >
-      <span className="cursor-petals" />
-      <span className="cursor-core" />
-    </motion.div>
+    <>
+      <motion.div
+        className={`fancy-cursor-outer ${isVisible ? 'cursor-visible' : ''}`}
+        style={{ x: outerX, y: outerY }}
+        animate={isActiveTarget ? { scale: 1.45, opacity: 0.86 } : { scale: 1, opacity: 0.74 }}
+        transition={{ duration: 0.16 }}
+      />
+      <motion.div
+        className={`fancy-cursor-inner ${isVisible ? 'cursor-visible' : ''}`}
+        style={{ x: innerX, y: innerY }}
+        animate={isActiveTarget ? { scale: 0.78 } : { scale: 1 }}
+        transition={{ duration: 0.12 }}
+      />
+    </>
   );
 }

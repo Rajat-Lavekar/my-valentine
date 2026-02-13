@@ -28,7 +28,7 @@ export const storySlides = [
     id: 'slide-2',
     beatLabel: 'Falling Star',
     mediaType: 'image',
-    background: '/assets/slides/02-falling-star.jpg',
+    background: WEB_ASSETS.slideTwoFrame,
     audio: '/assets/audio/02-falling-star.mp3',
     grade: 'linear-gradient(120deg, rgba(10, 8, 16, 0.7), rgba(131, 99, 56, 0.22))',
     poemTitle: 'quiet admiration',

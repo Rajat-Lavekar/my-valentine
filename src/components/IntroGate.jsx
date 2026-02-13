@@ -7,17 +7,29 @@ function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
 }
 
-export default function IntroGate({ onComplete, onUnlockAudio, onStartIntroAudio, onStopIntroAudio, onInteractionCue }) {
+export default function IntroGate({
+  introIsVisible,
+  onComplete,
+  onReset,
+  onUnlockAudio,
+  onStartIntroAudio,
+  onStopIntroAudio,
+  onInteractionCue
+}) {
   const dragX = useMotionValue(0);
   const [progress, setProgress] = useState(0);
   const [maxDrag, setMaxDrag] = useState(440);
   const [hasStarted, setHasStarted] = useState(false);
-  const [finishing, setFinishing] = useState(false);
+  const [isComplete, setIsComplete] = useState(false);
+  const [lockDrag, setLockDrag] = useState(false);
+  const [orbSession, setOrbSession] = useState(0);
+
   const completeRef = useRef(false);
+  const resetRef = useRef(true);
 
   const particles = useMemo(
     () =>
-      Array.from({ length: 20 }, (_, index) => ({
+      Array.from({ length: 24 }, (_, index) => ({
         id: index,
         left: ((index * 17) % 100) + 0.5,
         duration: 7 + ((index * 5) % 8),
@@ -29,7 +41,7 @@ export default function IntroGate({ onComplete, onUnlockAudio, onStartIntroAudio
 
   useEffect(() => {
     const updateMaxDrag = () => {
-      const candidate = window.innerWidth * 0.62;
+      const candidate = window.innerWidth * 0.58;
       setMaxDrag(clamp(candidate, 190, 680));
     };
 
@@ -43,7 +55,7 @@ export default function IntroGate({ onComplete, onUnlockAudio, onStartIntroAudio
 
   useEffect(() => {
     const unsubscribe = dragX.on('change', (value) => {
-      const next = clamp(-value / maxDrag, 0, 1);
+      const next = clamp(value / maxDrag, 0, 1);
       setProgress(next);
     });
 
@@ -51,35 +63,63 @@ export default function IntroGate({ onComplete, onUnlockAudio, onStartIntroAudio
   }, [dragX, maxDrag]);
 
   useEffect(() => {
-    if (progress < 0.985 || completeRef.current) {
+    if (!completeRef.current && progress >= 0.99) {
+      completeRef.current = true;
+      resetRef.current = false;
+      setIsComplete(true);
+      setLockDrag(true);
+      setOrbSession((current) => current + 1);
+      onInteractionCue?.();
+      onStopIntroAudio?.();
+
+      animate(dragX, maxDrag, {
+        duration: 0.24,
+        ease: [0.2, 0.7, 0.2, 1]
+      });
+
+      window.setTimeout(() => {
+        onComplete?.();
+      }, 520);
       return;
     }
 
-    completeRef.current = true;
-    setFinishing(true);
-    onInteractionCue?.();
-    onStopIntroAudio?.();
+    if (completeRef.current && !resetRef.current && progress <= 0.06) {
+      resetRef.current = true;
+      completeRef.current = false;
+      setIsComplete(false);
+      setLockDrag(false);
+      onReset?.();
+      onStartIntroAudio?.();
+    }
+  }, [dragX, maxDrag, onComplete, onInteractionCue, onReset, onStartIntroAudio, onStopIntroAudio, progress]);
 
-    animate(dragX, -maxDrag, {
-      duration: 0.32,
-      ease: [0.2, 0.7, 0.2, 1]
-    });
-
-    window.setTimeout(() => {
-      onComplete?.();
-    }, 1500);
-  }, [dragX, maxDrag, onComplete, onInteractionCue, onStopIntroAudio, progress]);
+  useEffect(() => {
+    if (introIsVisible) {
+      setLockDrag(false);
+    }
+  }, [introIsVisible]);
 
   const handleDragStart = async () => {
-    if (hasStarted || finishing) {
-      return;
+    if (!hasStarted) {
+      setHasStarted(true);
+      await onUnlockAudio?.();
+      onStartIntroAudio?.();
+      onInteractionCue?.();
     }
-
-    setHasStarted(true);
-    await onUnlockAudio?.();
-    onStartIntroAudio?.();
-    onInteractionCue?.();
   };
+
+  const handleDragEnd = () => {
+    const target = progress >= 0.5 ? maxDrag : 0;
+
+    animate(dragX, target, {
+      duration: 0.38,
+      ease: [0.2, 0.7, 0.2, 1]
+    });
+  };
+
+  const orbitWidth = maxDrag + 120;
+  const arcLift = -Math.sin(progress * Math.PI) * 56;
+  const canDrag = introIsVisible && !lockDrag;
 
   return (
     <section className="intro-gate" aria-label="Intro">
@@ -87,8 +127,8 @@ export default function IntroGate({ onComplete, onUnlockAudio, onStartIntroAudio
         className="intro-photo-layer"
         style={{
           backgroundImage: `url(${WEB_ASSETS.sunflowerField})`,
-          opacity: 0.15 + progress * 0.82,
-          filter: `saturate(${0.4 + progress * 0.8}) brightness(${0.34 + progress * 0.76})`
+          opacity: 0.2 + progress * 0.78,
+          filter: `saturate(${0.52 + progress * 0.78}) brightness(${0.42 + progress * 0.84})`
         }}
       />
       <motion.div className="intro-night-layer" style={{ opacity: 1 - progress }} />
@@ -99,9 +139,9 @@ export default function IntroGate({ onComplete, onUnlockAudio, onStartIntroAudio
         <motion.span
           key={particle.id}
           className="pollen-particle"
-          style={{ left: `${particle.left}%`, opacity: 0.16 + progress * 0.54 }}
+          style={{ left: `${particle.left}%`, opacity: 0.14 + progress * 0.56 }}
           animate={{
-            y: ['0vh', '-78vh'],
+            y: ['0vh', '-82vh'],
             x: [0, particle.drift, -particle.drift],
             opacity: [0, 0.25 + progress * 0.6, 0]
           }}
@@ -114,50 +154,69 @@ export default function IntroGate({ onComplete, onUnlockAudio, onStartIntroAudio
         />
       ))}
 
-      <motion.div className="intro-sky-track" style={{ transform: `translateY(${(1 - progress) * -8}px)` }}>
+      <div className="intro-orbit-shell" style={{ width: `${orbitWidth}px` }}>
         <motion.div
+          key={orbSession}
           className="moon-sun-orb"
-          drag="x"
+          drag={canDrag ? 'x' : false}
           dragElastic={0.04}
           dragMomentum={false}
-          dragConstraints={{ left: -maxDrag, right: 0 }}
-          style={{ x: dragX }}
+          dragConstraints={{ left: 0, right: maxDrag }}
+          style={{ x: dragX, y: arcLift }}
           onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
           data-cursor-spin="true"
         >
-          <motion.div className="orb-halo" style={{ opacity: 0.32 + progress * 0.58, scale: 0.85 + progress * 0.3 }} />
-          <motion.div className="moon-sun-icon" style={{ color: progress > 0.5 ? '#f8ca70' : '#d8deef' }}>
+          <motion.div
+            className="orb-halo"
+            style={{
+              opacity: 0.26 + progress * 0.62,
+              scale: 0.8 + progress * 0.36
+            }}
+          />
+          <motion.div className="moon-sun-icon-wrap" style={{ rotate: -14 + progress * 14 }}>
             <MoonSunMorph progress={progress} />
           </motion.div>
         </motion.div>
-      </motion.div>
+      </div>
+
+      <div className="intro-sunflower-anchor">
+        <motion.div
+          className="intro-sunflower-head-wrap"
+          style={{
+            rotate: `${24 - progress * 36}deg`,
+            x: `${-12 + progress * 18}px`,
+            y: `${10 - progress * 10}px`
+          }}
+        >
+          <motion.img
+            src={WEB_ASSETS.sunflowerIntroPng}
+            alt="sunflower"
+            className="intro-sunflower-head"
+            style={{
+              filter: `drop-shadow(0 14px 22px rgba(11, 6, 3, 0.42)) saturate(${0.74 + progress * 0.36}) brightness(${0.7 + progress * 0.5})`
+            }}
+          />
+        </motion.div>
+      </div>
 
       <motion.div
-        className="intro-ground-sunflower"
-        style={{
-          rotate: `${30 - progress * 30}deg`,
-          y: `${18 - progress * 18}px`
+        className="intro-thought-cloud"
+        animate={{
+          opacity: isComplete ? 0.84 : 1,
+          y: isComplete ? 3 : 0
         }}
+        transition={{ duration: 0.35 }}
       >
-        <span className="ground-stem" />
-        <motion.img
-          src={WEB_ASSETS.sunflowerPng}
-          alt="sunflower"
-          className="ground-head-image"
-          style={{ filter: `saturate(${0.72 + progress * 0.35}) brightness(${0.7 + progress * 0.45})` }}
-        />
+        <p>
+          {isComplete
+            ? 'sun is awake, scroll to begin the story. drag back to moon to reset.'
+            : 'drag the moon to sun so the sunflower starts telling you a story'}
+        </p>
+        <span className="thought-tail thought-tail-1" />
+        <span className="thought-tail thought-tail-2" />
+        <span className="thought-tail thought-tail-3" />
       </motion.div>
-
-      <motion.p className="intro-caption" animate={{ opacity: finishing ? 0 : 1 }} transition={{ duration: 0.6 }}>
-        drag the moon to the left and wait for sunrise
-      </motion.p>
-
-      <motion.div
-        className="intro-blackout"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: finishing ? 1 : 0 }}
-        transition={{ duration: 1.35, ease: [0.2, 0.7, 0.2, 1] }}
-      />
     </section>
   );
 }
