@@ -17,5 +17,5 @@ export const WEB_ASSETS = {
   sunflowerCursorPng: './assets/slides/sunflower_without_bg.png',
 
   // Paper wad texture
-  crumpledPaperTexture: './assets/slides/crumbled-paper.avif'
+  crumpledPaperTexture: './assets/slides/crumbled-paper.png'
 };

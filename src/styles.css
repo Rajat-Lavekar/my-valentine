@@ -333,26 +333,17 @@ body.sunflower-cursor-enabled * {
   display: grid;
   place-items: center;
   cursor: pointer;
+  background: transparent;
 }
 
 .paper-crumple {
   position: absolute;
-  width: clamp(140px, 24vw, 200px);
+  width: clamp(110px, 18vw, 150px);
   aspect-ratio: 1;
-  border-radius: 56% 44% 48% 52% / 62% 38% 57% 43%;
-  background:
-    radial-gradient(circle at 35% 30%, rgba(255, 250, 237, 0.94), rgba(226, 205, 165, 0.92) 56%, rgba(182, 150, 101, 0.92)),
-    repeating-linear-gradient(
-      38deg,
-      rgba(103, 72, 36, calc(var(--paper-crinkle) * 0.22)) 0px,
-      transparent 3px,
-      transparent 12px
-    );
+  border-radius: 50%;
   box-shadow:
     0 24px 34px rgba(10, 6, 2, 0.48),
     inset 0 0 35px rgba(103, 67, 23, 0.22);
-  background-size: cover;
-  background-blend-mode: overlay;
   animation: paper-breathe 3s ease-in-out infinite;
 }
 

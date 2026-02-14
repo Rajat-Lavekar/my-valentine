@@ -117,9 +117,13 @@ export default function PaperPoem({ title, lines, crinkle, isActive, onOpen }) {
               animate={{ opacity: 1, scale: 1, rotate: [4, -6, 3, -2, 2] }}
               exit={{ opacity: 0, scale: 0.3, rotate: -22 }}
               transition={{ duration: 0.9, ease: [0.2, 0.7, 0.2, 1] }}
-              style={{ backgroundImage: `url(${WEB_ASSETS.crumpledPaperTexture})` }}
+              style={{ 
+                backgroundImage: `url(${WEB_ASSETS.crumpledPaperTexture})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center'
+              }}
             >
-              <p className="paper-hint">tap to unfold</p>
+              <p className="paper-hint"></p>
             </motion.div>
           )}
         </AnimatePresence>
