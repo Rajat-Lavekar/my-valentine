@@ -1,28 +1,119 @@
-# For a Reason
+# My Valentine 💝
 
-Cinematic, scroll-driven React experience for a Valentine's gift.
+A romantic, scroll-driven cinematic experience built as a Valentine's Day gift. Features a moon-to-sun drag interaction, 8 story slides with poems, floating emojis, and zone-based background music.
 
-## Stack
-- React
-- Framer Motion
-- Web Audio API (no backend)
+## 🚀 Live Site
 
-## Run
-1. `npm install`
-2. `npm run dev`
+**https://rajat-lavekar.github.io/my-valentine/**
 
-## Build
-- `npm run build`
+## 🛠 Tech Stack
 
-## Asset Replacement
-Update paths in `/Users/rajatlavekar/Desktop/rajat/personal-projects/my-valentine/src/data/slides.js`.
+- React + Vite
+- Framer Motion (animations)
+- Web Audio API (background music & SFX)
+- GitHub Pages (hosting)
 
-Expected local folders:
-- `/Users/rajatlavekar/Desktop/rajat/personal-projects/my-valentine/public/assets/slides/`
-- `/Users/rajatlavekar/Desktop/rajat/personal-projects/my-valentine/public/assets/audio/`
-- `/Users/rajatlavekar/Desktop/rajat/personal-projects/my-valentine/public/assets/faces/`
+## 📦 Setup
 
-Current timeline:
-- Intro audio bed + interaction cue
-- 8 narrative slides, one clip per slide, non-looping
-- Paper unfold SFX on poem open
+```bash
+npm install
+npm run dev
+```
+
+Visit `http://localhost:5173`
+
+## 🏗 Build & Deploy
+
+```bash
+npm run build
+npx gh-pages -d dist
+```
+
+Site deploys to the `gh-pages` branch automatically.
+
+## 🎨 Customizing Content
+
+### Story Slides & Poems
+**File:** `src/data/slides.js`
+
+Update the `storySlides` array with your own:
+- `poemTitle` and `poemLines`
+- `beatLabel` (chapter name)
+- `grade` (color overlay)
+
+### Slide Backgrounds
+**Folder:** `public/assets/slides/`
+
+Replace these images (keep the same filenames):
+- `01-slide.webp` through `08-slide.png` (8 story slides)
+- `S1-mv.png` (intro gate background)
+
+### Audio Tracks
+**Folder:** `public/assets/audio/`
+
+Replace these files (keep the same filenames):
+- `intro_instrumental.mov` (plays during intro + slide 1)
+- `slides_music.mov` (plays from slide 2 onwards, no loop)
+- `outro-instrumental.mov` (plays on last slide)
+
+**File:** `src/data/slides.js` (lines 7-9)
+
+### Character Face Overlays
+**Folder:** `public/assets/faces/`
+
+Add `author.png` and `partner.png` for the face overlays on slides.
+
+**File:** `src/data/slides.js` (each slide's `faces` array)
+
+### Intro Text
+**File:** `src/components/IntroGate.jsx` (lines 211-214)
+
+Update the thought cloud messages:
+- Before drag: "gently drag the moon across..."
+- After completion: "the sun is awake now..."
+
+### Valentine's Day Message
+**File:** `src/components/CinematicSlide.jsx` (lines 153-155)
+
+Update the finale overlay text on the last slide.
+
+## 📁 Project Structure
+
+```
+my-valentine/
+├── public/
+│   └── assets/
+│       ├── slides/      # Background images
+│       ├── audio/       # Music tracks
+│       └── faces/       # Character overlays
+├── src/
+│   ├── components/      # React components
+│   ├── data/
+│   │   ├── slides.js    # Story content & poems
+│   │   └── webAssets.js # Asset paths
+│   ├── hooks/           # Audio & scroll logic
+│   └── styles.css       # Global styles
+└── vite.config.js       # Build config (base path)
+```
+
+## 🎵 Audio Flow
+
+1. **Intro music** plays during moon drag + slide 1
+2. **Slides music** starts on slide 2, plays once (no loop)
+3. **Outro music** fades in on the last slide
+
+## 🎭 Features
+
+- Moon-to-sun drag interaction with day/night transition
+- 8 cinematic slides with scroll-snap
+- Crumpled paper poems that unfold on tap
+- Per-slide floating emojis (🌻 🌠 💔 💕 👀 🖤 ✨ ❤️)
+- Zone-based background music with smooth crossfades
+- Custom sunflower cursor
+- Romantic finale with "Happy Valentine's Day" message
+
+## 📝 Notes
+
+- Audio files are `.mov` format (works in all modern browsers)
+- Site uses relative paths for GitHub Pages compatibility
+- All animations use Framer Motion for smooth 60fps performance
