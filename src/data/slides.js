@@ -4,9 +4,9 @@ import { WEB_ASSETS } from './webAssets';
 // Zone 1 – intro: plays during the moon-to-sun drag and through slides 1-2
 // Zone 2 – story: starts on slide 3, loops continuously until the last slide
 // Zone 3 – outro: fades in on the final slide
-export const INTRO_AUDIO = '/assets/audio/intro_instrumental.mov';
-export const SLIDES_AUDIO = '/assets/audio/slides_music.mov';
-export const OUTRO_AUDIO = '/assets/audio/outro-instrumental.mov';
+export const INTRO_AUDIO = './assets/audio/intro_instrumental.mov';
+export const SLIDES_AUDIO = './assets/audio/slides_music.mov';
+export const OUTRO_AUDIO = './assets/audio/outro-instrumental.mov';
 
 // ── Story slides ─────────────────────────────────────────────────────────────
 export const storySlides = [
@@ -123,7 +123,8 @@ export const storySlides = [
     grade: 'linear-gradient(120deg, rgba(32, 12, 8, 0.58), rgba(235, 144, 79, 0.22))',
     poemTitle: 'present & future',
     poemLines: [
-      'Scenes cuto to now: sparks bloom above us, and we do not flinch.',
+      'Scenes cut to now:',
+      'Sparks bloom above us, and we do not flinch.',
       'I hold your hand and the future stops feeling abstract.',
       'I finally see my hope, and my hope has your voice in it.'
     ],
