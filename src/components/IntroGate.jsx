@@ -210,8 +210,8 @@ export default function IntroGate({
       >
         <p>
           {isComplete
-            ? 'the sun is awake now... scroll down to begin our story together'
-            : 'gently drag the moon across the sky and let the sunflower whisper our story to you'}
+            ? 'The Sun is awake now... scroll down to begin our story together'
+            : 'Gently drag the moon across the sky and let the Sunflower whisper our story to you'}
         </p>
         <span className="thought-tail thought-tail-1" />
         <span className="thought-tail thought-tail-2" />
