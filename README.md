@@ -20,16 +20,7 @@ npm install
 npm run dev
 ```
 
-Visit `http://localhost:5173`
-
-## 🏗 Build & Deploy
-
-```bash
-npm run build
-npx gh-pages -d dist
-```
-
-Site deploys to the `gh-pages` branch automatically.
+The project runs at port 5173
 
 ## 🎨 Customizing Content
 
@@ -45,7 +36,7 @@ Update the `storySlides` array with your own:
 **Folder:** `public/assets/slides/`
 
 Replace these images (keep the same filenames):
-- `01-slide.webp` through `08-slide.png` (8 story slides)
+- `01-slide.jpg` through `08-slide.png` (8 story slides)
 - `S1-mv.png` (intro gate background)
 
 ### Audio Tracks
@@ -58,19 +49,12 @@ Replace these files (keep the same filenames):
 
 **File:** `src/data/slides.js` (lines 7-9)
 
-### Character Face Overlays
-**Folder:** `public/assets/faces/`
-
-Add `author.png` and `partner.png` for the face overlays on slides.
-
-**File:** `src/data/slides.js` (each slide's `faces` array)
-
 ### Intro Text
 **File:** `src/components/IntroGate.jsx` (lines 211-214)
 
 Update the thought cloud messages:
-- Before drag: "gently drag the moon across..."
-- After completion: "the sun is awake now..."
+- Before drag: "Gently drag the moon across..."
+- After completion: "The sun is awake now..."
 
 ### Valentine's Day Message
 **File:** `src/components/CinematicSlide.jsx` (lines 153-155)
@@ -85,7 +69,7 @@ my-valentine/
 │   └── assets/
 │       ├── slides/      # Background images
 │       ├── audio/       # Music tracks
-│       └── faces/       # Character overlays
+│       └── faces/       # Unused, but planned for character overlays
 ├── src/
 │   ├── components/      # React components
 │   ├── data/
