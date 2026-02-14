@@ -81,7 +81,7 @@ export function useCinematicAudio({ slides, activeSlideId, introComplete }) {
   }, []);
 
   // ── Zone detection ───────────────────────────────────────────────────────
-  // Slides 1-2 → 'intro', slides 3 through N-1 → 'slides', last slide → 'outro'
+  // Intro music: intro gate + 1st slide only. Slides music: from 2nd slide, no loop. Outro: last slide.
 
   const getZone = useCallback(
     (slideId) => {
@@ -92,7 +92,7 @@ export function useCinematicAudio({ slides, activeSlideId, introComplete }) {
       if (idx < 0) {
         return null;
       }
-      if (idx <= 1) {
+      if (idx <= 0) {
         return 'intro';
       }
       if (idx >= slides.length - 1) {
@@ -117,7 +117,7 @@ export function useCinematicAudio({ slides, activeSlideId, introComplete }) {
       introAudioRef.current = createAudioElement(INTRO_AUDIO, true);
     }
     if (!slidesAudioRef.current) {
-      slidesAudioRef.current = createAudioElement(SLIDES_AUDIO, true);
+      slidesAudioRef.current = createAudioElement(SLIDES_AUDIO, false);
     }
     if (!outroAudioRef.current) {
       outroAudioRef.current = createAudioElement(OUTRO_AUDIO, false);

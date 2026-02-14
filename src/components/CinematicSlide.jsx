@@ -26,22 +26,41 @@ const contentVariants = {
   }
 };
 
-// Floating hearts for the last slide
-const HEARTS = Array.from({ length: 12 }, (_, i) => ({
-  id: i,
-  left: ((i * 19) % 100) + 1,
-  size: 10 + ((i * 7) % 14),
-  duration: 8 + ((i * 3) % 6),
-  delay: ((i * 5) % 12) / 4,
-  drift: ((i * 11) % 40) - 20,
-  opacity: 0.12 + ((i * 3) % 6) * 0.04
-}));
+// Emoji and particle config per slide: [emoji, count, sizeMin, sizeMax]
+const SLIDE_EMOJI_CONFIG = [
+  ['🌻', 18, 10, 22],   // 1 – Beginning (sunflower)
+  ['🌠', 18, 10, 22],   // 2 – Falling Star
+  ['💔', 18, 10, 22],   // 3 – Rejection (broken heart)
+  ['💕', 18, 10, 22],   // 4 – Waiting (two hearts)
+  ['👀', 18, 10, 22],   // 5 – Classroom Glance (eyes)
+  ['🖤', 18, 10, 22],   // 6 – Dream (black heart)
+  ['✨', 18, 10, 22],   // 7 – Firecrackers (sparkles)
+  ['❤️', 28, 18, 32]   // 8 – Finale (hearts: more and bigger)
+];
+
+function useFloatingParticles(slideIndex) {
+  return useMemo(() => {
+    const [emoji, count, sizeMin, sizeMax] = SLIDE_EMOJI_CONFIG[slideIndex] ?? ['❤️', 18, 10, 22];
+    return Array.from({ length: count }, (_, i) => ({
+      id: i,
+      emoji,
+      left: ((i * 19) % 100) + 1,
+      size: sizeMin + ((i * 7) % (sizeMax - sizeMin + 1)),
+      duration: 8 + ((i * 3) % 6),
+      delay: ((i * 5) % 12) / 4,
+      drift: ((i * 11) % 40) - 20,
+      opacity: 0.12 + ((i * 3) % 6) * 0.04
+    }));
+  }, [slideIndex]);
+}
 
 export default function CinematicSlide({ slide, slideIndex, totalSlides, isActive, isLast, onPaperOpen }) {
   const romanNumeral = useMemo(() => {
     const numerals = ['i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii', 'ix', 'x'];
     return numerals[slideIndex] || `${slideIndex + 1}`;
   }, [slideIndex]);
+
+  const particles = useFloatingParticles(slideIndex);
 
   return (
     <section
@@ -79,32 +98,31 @@ export default function CinematicSlide({ slide, slideIndex, totalSlides, isActiv
         />
       ))}
 
-      {/* Floating hearts on the finale slide */}
-      {isLast &&
-        HEARTS.map((heart) => (
-          <motion.span
-            key={heart.id}
-            className="floating-heart"
-            style={{
-              left: `${heart.left}%`,
-              fontSize: `${heart.size}px`
-            }}
-            animate={{
-              y: ['0vh', '-90vh'],
-              x: [0, heart.drift, -heart.drift * 0.6],
-              opacity: [0, heart.opacity, 0],
-              rotate: [0, heart.drift * 2, -heart.drift]
-            }}
-            transition={{
-              duration: heart.duration,
-              delay: heart.delay,
-              repeat: Infinity,
-              ease: 'linear'
-            }}
-          >
-            &#10084;
-          </motion.span>
-        ))}
+      {/* Floating emojis on every slide */}
+      {particles.map((p) => (
+        <motion.span
+          key={p.id}
+          className="floating-emoji"
+          style={{
+            left: `${p.left}%`,
+            fontSize: `${p.size}px`
+          }}
+          animate={{
+            y: ['0vh', '-90vh'],
+            x: [0, p.drift, -p.drift * 0.6],
+            opacity: [0, p.opacity, 0],
+            rotate: [0, p.drift * 2, -p.drift]
+          }}
+          transition={{
+            duration: p.duration,
+            delay: p.delay,
+            repeat: Infinity,
+            ease: 'linear'
+          }}
+        >
+          {p.emoji}
+        </motion.span>
+      ))}
 
       {/* Slide counter */}
       <motion.div

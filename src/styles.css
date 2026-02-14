@@ -542,6 +542,15 @@ body.sunflower-cursor-enabled * {
   z-index: 1;
 }
 
+.floating-emoji {
+  position: absolute;
+  bottom: -6vh;
+  pointer-events: none;
+  filter: blur(0.25px);
+  z-index: 1;
+  line-height: 1;
+}
+
 /* ── Valentine's Day finale ──────────────────────────────────────────────── */
 
 .cinematic-slide-finale {

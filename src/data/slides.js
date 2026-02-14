@@ -14,7 +14,7 @@ export const storySlides = [
     id: 'slide-1',
     beatLabel: 'Beginning',
     mediaType: 'image',
-    background: WEB_ASSETS.sunflowerField,
+    background: WEB_ASSETS.slide1Frame,
     grade: 'linear-gradient(120deg, rgba(53, 30, 12, 0.55), rgba(220, 163, 75, 0.22))',
     poemTitle: 'for a reason',
     poemLines: [
@@ -32,7 +32,7 @@ export const storySlides = [
     id: 'slide-2',
     beatLabel: 'Falling Star',
     mediaType: 'image',
-    background: WEB_ASSETS.slideTwoFrame,
+    background: WEB_ASSETS.slide2Frame,
     grade: 'linear-gradient(120deg, rgba(10, 8, 16, 0.7), rgba(131, 99, 56, 0.22))',
     poemTitle: 'quiet admiration',
     poemLines: [
@@ -49,13 +49,13 @@ export const storySlides = [
     id: 'slide-3',
     beatLabel: 'Rejection',
     mediaType: 'image',
-    background: WEB_ASSETS.slideThreeFrame,
+    background: WEB_ASSETS.slide3Frame,
     grade: 'linear-gradient(115deg, rgba(46, 20, 18, 0.62), rgba(210, 148, 88, 0.25))',
     poemTitle: 'sad, then smiling',
     poemLines: [
-      'I offered a flower and received a lesson in timing.',
+      'I offered a letter and received a lesson in timing.',
       'My heart hurt, but somehow it still laughed with me.',
-      'Even that no became part of our yes.'
+      'Even this no became a part of my yes.'
     ],
     crinkle: 0.82,
     faces: [
@@ -67,13 +67,13 @@ export const storySlides = [
     id: 'slide-4',
     beatLabel: 'Waiting',
     mediaType: 'image',
-    background: WEB_ASSETS.slideFourFrame,
+    background: WEB_ASSETS.slide4Frame,
     grade: 'linear-gradient(115deg, rgba(7, 10, 19, 0.72), rgba(130, 88, 43, 0.3))',
     poemTitle: 'restraint',
     poemLines: [
       'I waited beneath your window with patient footsteps.',
       'Longing taught me discipline, not distance.',
-      'Some nights, devotion is simply staying.'
+      'I stayed because I could already see our laughter, our home, and our forever.'
     ],
     crinkle: 0.7,
     faces: [
@@ -84,13 +84,13 @@ export const storySlides = [
     id: 'slide-5',
     beatLabel: 'Classroom Glance',
     mediaType: 'image',
-    background: WEB_ASSETS.slideFiveFrame,
+    background: WEB_ASSETS.slide5Frame,
     grade: 'linear-gradient(110deg, rgba(23, 18, 10, 0.55), rgba(180, 130, 69, 0.2))',
     poemTitle: 'mutual awareness',
     poemLines: [
-      'Across old desks and unfinished notes, our eyes kept meeting.',
+      'Across old desks and unfinished notes, my eyes kept meeting yours.',
       'The room was full, yet it felt like a secret corridor.',
-      'We were no longer strangers pretending.'
+      'We were not friends yet, but we were not strangers either.'
     ],
     crinkle: 0.58,
     faces: [
@@ -102,13 +102,13 @@ export const storySlides = [
     id: 'slide-6',
     beatLabel: 'Dream',
     mediaType: 'image',
-    background: WEB_ASSETS.slideSixFrame,
+    background: WEB_ASSETS.slide6Frame,
     grade: 'linear-gradient(110deg, rgba(12, 12, 12, 0.72), rgba(198, 184, 151, 0.18))',
     poemTitle: 'yearning',
     poemLines: [
-      'In black and white dreams, your face stayed in color.',
+      'In my black and white dreams, your face stayed in color.',
       'I wished for ordinary moments: tea, rain, your shoulder near mine.',
-      'Desire became gentle, then true.'
+      'I could only see two lovers, side by side, for ever.'
     ],
     crinkle: 0.42,
     faces: [
@@ -119,13 +119,13 @@ export const storySlides = [
     id: 'slide-7',
     beatLabel: 'Firecrackers',
     mediaType: 'image',
-    background: WEB_ASSETS.slideSevenFrame,
+    background: WEB_ASSETS.slide7Frame,
     grade: 'linear-gradient(120deg, rgba(32, 12, 8, 0.58), rgba(235, 144, 79, 0.22))',
     poemTitle: 'present & future',
     poemLines: [
-      'Now sparks bloom above us, and we do not flinch.',
+      'Scenes cuto to now: sparks bloom above us, and we do not flinch.',
       'I hold your hand and the future stops feeling abstract.',
-      'Hope has your voice in it.'
+      'I finally see my hope, and my hope has your voice in it.'
     ],
     crinkle: 0.25,
     faces: [
@@ -137,13 +137,13 @@ export const storySlides = [
     id: 'slide-8',
     beatLabel: 'To Be Continued',
     mediaType: 'image',
-    background: WEB_ASSETS.slideEightFrame,
+    background: WEB_ASSETS.slide8Frame,
     grade: 'linear-gradient(115deg, rgba(11, 8, 7, 0.52), rgba(198, 151, 98, 0.18))',
     poemTitle: 'contentment',
     poemLines: [
       'Your shoulder became home before I noticed.',
       'The world softened, and we stayed.',
-      'This is not an ending, only a quiet next chapter.'
+      'This is not an ending, we are only beginning.'
     ],
     crinkle: 0.1,
     faces: [

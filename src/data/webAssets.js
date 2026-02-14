@@ -1,13 +1,16 @@
 export const WEB_ASSETS = {
-  // Slide backgrounds
+  // Intro gate background (sunflower field)
   sunflowerField: '/assets/slides/S1-mv.png',
-  slideTwoFrame: '/assets/slides/S2-mv.jpg',
-  slideThreeFrame: '/assets/slides/S3-mv.jpg',
-  slideFourFrame: '/assets/slides/S4-mv.jpg',
-  slideFiveFrame: '/assets/slides/S5-mv.jpg',
-  slideSixFrame: '/assets/slides/S6-mv.jpg',
-  slideSevenFrame: '/assets/slides/S7-mv.jpg',
-  slideEightFrame: '/assets/slides/S8-mv.jpg',
+
+  // Story slide backgrounds (01–08 naming from slides folder)
+  slide1Frame: '/assets/slides/01-slide.webp',
+  slide2Frame: '/assets/slides/02-slide.png',
+  slide3Frame: '/assets/slides/03-slide.png',
+  slide4Frame: '/assets/slides/04-slide.png',
+  slide5Frame: '/assets/slides/05-slide.png',
+  slide6Frame: '/assets/slides/06-slide.png',
+  slide7Frame: '/assets/slides/07-slide.png',
+  slide8Frame: '/assets/slides/08-slide.png',
 
   // Transparent sunflower cutout for intro
   sunflowerIntroPng: '/assets/slides/sunflower_without_bg.png',
