@@ -337,7 +337,7 @@ body.sunflower-cursor-enabled * {
 
 .paper-crumple {
   position: absolute;
-  width: clamp(120px, 21vw, 170px);
+  width: clamp(140px, 24vw, 200px);
   aspect-ratio: 1;
   border-radius: 56% 44% 48% 52% / 62% 38% 57% 43%;
   background:
