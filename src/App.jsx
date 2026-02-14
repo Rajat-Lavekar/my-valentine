@@ -10,6 +10,7 @@ import { useTimedScrollHold } from './hooks/useTimedScrollHold';
 export default function App() {
   const rootRef = useRef(null);
   const [introComplete, setIntroComplete] = useState(false);
+  const [scrollTop, setScrollTop] = useState(0);
 
   const { activeSlideId } = useActiveSlide({
     rootRef,
@@ -30,7 +31,6 @@ export default function App() {
   });
 
   const handleIntroComplete = useCallback(() => {
-    // Intro gates the entire story, so we only unlock scroll after the fade-out lands.
     setIntroComplete(true);
 
     const rootNode = rootRef.current;
@@ -39,11 +39,24 @@ export default function App() {
     }
 
     window.requestAnimationFrame(() => {
-      // Start the cinematic timeline at the first narrative frame.
       rootNode.scrollTo({
         top: window.innerHeight,
         behavior: 'smooth'
       });
+    });
+  }, []);
+
+  const handleIntroReset = useCallback(() => {
+    setIntroComplete(false);
+
+    const rootNode = rootRef.current;
+    if (!rootNode) {
+      return;
+    }
+
+    rootNode.scrollTo({
+      top: 0,
+      behavior: 'smooth'
     });
   }, []);
 
@@ -53,7 +66,6 @@ export default function App() {
       return;
     }
 
-    // Body stays fixed and the internal container owns all timeline scrolling.
     rootNode.style.overflowY = introComplete ? 'auto' : 'hidden';
     document.body.style.overflow = 'hidden';
 
@@ -62,12 +74,37 @@ export default function App() {
     };
   }, [introComplete]);
 
+  useEffect(() => {
+    const rootNode = rootRef.current;
+    if (!rootNode) {
+      return;
+    }
+
+    const syncScrollTop = () => {
+      setScrollTop(rootNode.scrollTop);
+    };
+
+    syncScrollTop();
+    rootNode.addEventListener('scroll', syncScrollTop, { passive: true });
+
+    return () => {
+      rootNode.removeEventListener('scroll', syncScrollTop);
+    };
+  }, []);
+
+  const viewportHeight = typeof window === 'undefined' ? 0 : window.innerHeight;
+  const introIsVisible = scrollTop < viewportHeight * 0.72;
+
+  const totalSlides = storySlides.length;
+
   return (
     <main className="app-shell">
       <SunflowerCursor rootRef={rootRef} />
 
       <div className={`experience-root ${isHolding ? 'hold-active' : ''}`} ref={rootRef}>
         <IntroGate
+          introIsVisible={introIsVisible}
+          onReset={handleIntroReset}
           onUnlockAudio={unlockAudio}
           onStartIntroAudio={startIntroBed}
           onInteractionCue={playInteractionCue}
@@ -75,11 +112,14 @@ export default function App() {
           onComplete={handleIntroComplete}
         />
 
-        {storySlides.map((slide) => (
+        {storySlides.map((slide, index) => (
           <CinematicSlide
             key={slide.id}
             slide={slide}
+            slideIndex={index}
+            totalSlides={totalSlides}
             isActive={activeSlideId === slide.id}
+            isLast={index === totalSlides - 1}
             onPaperOpen={playPaperFx}
           />
         ))}
